@@ -47,21 +47,36 @@ namespace GTAV_purge_mod {
         private VehicleColor primaryColor = VehicleColor.MetallicWhite;
         private VehicleColor secondaryColor = VehicleColor.MetallicWhite;
 
-
         private List<Member> _members = new List<Member>();
         private int group = 0;
         private Member boss = null;
 
-        public Team(string name) {
+        public Team(string name, params Model[] vmodels) {
 
             this.name = name;
+            this.vehicleModels = vmodels;
+
             group = World.AddRelationShipGroup(name);
+            resetModDict();
 
         }
 
         public string Name {
             get { return name; }
             set { name = value; }
+        }
+
+        public void resetModDict() {
+            string[] names = Enum.GetNames(typeof(VehicleMod));
+
+            for (int i = 0; i < names.Length; i++) {
+
+                string e = names[i];
+                VehicleMod mod = (VehicleMod)Enum.Parse(typeof(VehicleMod), e);
+
+                mods.Add(mod, 0);
+
+            }
         }
 
         public Vehicle spawnRandom(int x, int y, int z) {
@@ -73,14 +88,12 @@ namespace GTAV_purge_mod {
 
             Vehicle veh = World.CreateVehicle(vehicleModels[index], new GTA.Math.Vector3(x, y, z));
 
-            string[] names = Enum.GetNames(typeof(VehicleMod));
+            for (int i = 0; i < mods.Count; i++) {
 
-            for (int i = 0; i < names.Length; i++) {
+                VehicleMod mod = mods.Keys.ToList<VehicleMod>()[i];
+                int value = mods.Values.ToList<int>()[i];
 
-                string e = names[i];
-                VehicleMod mod = (VehicleMod) Enum.Parse(typeof(VehicleMod), e);
-
-                mods.Add(mod, 0);
+                veh.SetMod(mod, value, true);
 
             }
 
@@ -89,6 +102,10 @@ namespace GTAV_purge_mod {
 
             return veh;
 
+        }
+
+        public Vehicle spawn(int index, GTA.Math.Vector3 vect) {
+            return spawn(index, (int) vect.X, (int) vect.Y, (int) vect.Z);
         }
 
         public Dictionary<VehicleMod, int> VehicleMods {
