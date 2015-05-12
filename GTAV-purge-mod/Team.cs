@@ -39,7 +39,7 @@ namespace GTAV_purge_mod {
    
         private string name;
 
-        private Model[] vehicleModels = null;
+        private GTA.Native.VehicleHash[] vehicleModels = null;
 
         private Dictionary<VehicleMod, int> mods = 
             new Dictionary<VehicleMod,int>();
@@ -51,22 +51,28 @@ namespace GTAV_purge_mod {
         private int group = 0;
         private Member boss = null;
 
-        public Team(string name, params Model[] vmodels) {
+        public Team(string name, params GTA.Native.VehicleHash[] vmodels) {
 
             this.name = name;
             this.vehicleModels = vmodels;
 
             group = World.AddRelationShipGroup(name);
-            resetModDict();
+            ResetMods();
 
         }
 
+        /// <summary>
+        /// Returns the name of this team.
+        /// </summary>
         public string Name {
             get { return name; }
             set { name = value; }
         }
 
-        public void resetModDict() {
+        /// <summary>
+        /// Sets all the mods in the dictionary to 0.
+        /// </summary>
+        public void ResetMods() {
             string[] names = Enum.GetNames(typeof(VehicleMod));
 
             for (int i = 0; i < names.Length; i++) {
@@ -79,12 +85,27 @@ namespace GTAV_purge_mod {
             }
         }
 
-        public Vehicle spawnRandom(int x, int y, int z) {
+        /// <summary>
+        /// Spawns a random vehicle on the specified coordinates.
+        /// </summary>
+        /// <param name="x">The X-coordinate.</param>
+        /// <param name="y">The Y-coordinate.</param>
+        /// <param name="z">The Z-coordinate.</param>
+        /// <returns></returns>
+        public Vehicle SpawnRandom(int x, int y, int z) {
             Random rand = new Random(DateTime.Today.Second);
-            return spawn(rand.Next(vehicleModels.Length) - 1, x, y, z);
+            return Spawn(rand.Next(vehicleModels.Length) - 1, x, y, z);
         }
 
-        public Vehicle spawn(int index, int x, int y, int z) {
+        /// <summary>
+        /// Spawns a vehicle on the specified index at the specified coordinates.
+        /// </summary>
+        /// <param name="index">The index of the vehicle to spawn.</param>
+        /// <param name="x">The X-coordinate.</param>
+        /// <param name="y">The Y-coordinate.</param>
+        /// <param name="z">The Z-coordinate.</param>
+        /// <returns></returns>
+        public Vehicle Spawn(int index, int x, int y, int z) {
 
             Vehicle veh = World.CreateVehicle(vehicleModels[index], new GTA.Math.Vector3(x, y, z));
 
@@ -104,30 +125,51 @@ namespace GTAV_purge_mod {
 
         }
 
-        public Vehicle spawn(int index, GTA.Math.Vector3 vect) {
-            return spawn(index, (int) vect.X, (int) vect.Y, (int) vect.Z);
+        /// <summary>
+        /// Spawns a vehicle on the specified index at the specified Vector3.
+        /// </summary>
+        /// <param name="index">The index of the vehicle to spawn.</param>
+        /// <param name="vect">The Vector3 where to spawn the vehicle.</param>
+        /// <returns></returns>
+        public Vehicle Spawn(int index, GTA.Math.Vector3 vect) {
+            return Spawn(index, (int) vect.X, (int) vect.Y, (int) vect.Z);
         }
 
+        /// <summary>
+        /// Returns the default configuration of this team vehicle.
+        /// </summary>
         public Dictionary<VehicleMod, int> VehicleMods {
             get { return mods; }
             set { mods = value; }
         }
 
-        public Model[] VehicleModels {
+        /// <summary>
+        /// Returns the vehicle models that are part of this team.
+        /// </summary>
+        public GTA.Native.VehicleHash[] VehicleModels {
             get { return vehicleModels; }
             set { vehicleModels = value; }
         }
 
+        /// <summary>
+        /// Returns the group handle of this team.
+        /// </summary>
         public int Group {
             get { return group; }
             set { group = value; }
         }
 
+        /// <summary>
+        /// Returns the leader of this team.
+        /// </summary>
         public Ped Leader {
             get;
             set;
         }
 
+        /// <summary>
+        /// Returns the members of this team.
+        /// </summary>
         public List<Member> Members {
             get { return _members; }
         }
