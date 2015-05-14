@@ -29,6 +29,7 @@ namespace GTAV_purge_mod.Team {
         private WeaponHash[] _weapons = new WeaponHash[] {WeaponHash.Knife};
         private VehicleSeat _preferredSeat = VehicleSeat.Any;
         private WeaponHash _preferredWeapon;
+        private Team _team;
 
         private TeamMemberRank _rank = TeamMemberRank.StreetRat;
 
@@ -78,6 +79,11 @@ namespace GTAV_purge_mod.Team {
         public TeamMemberRank Rank {
             get { return _rank; }
             set { _rank = value; }
+        }
+
+        public Team Team {
+            get { return _team; }
+            set { _team = value; }
         }
 
         private int Accuracy {
@@ -140,7 +146,7 @@ namespace GTAV_purge_mod.Team {
 
         }
 
-        private void ApplyChanges() {
+        public void ApplyChanges() {
 
             if (Ped != null && IsActive) {
 

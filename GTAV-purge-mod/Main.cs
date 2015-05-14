@@ -20,14 +20,14 @@ namespace GTAV_purge_mod {
         public static Viewport MainViewport;
         public static UIText DebugText;
 
-        private readonly Player _player;
+        public static Player Player;
         public static readonly List<Team.Team> Teams = new List<Team.Team>();
 
         public Main() {
 
             Ticks = 0;
 
-            _player = Game.Player;
+            Player = Game.Player;
 
             MainViewport = View;
             DebugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
@@ -47,7 +47,7 @@ namespace GTAV_purge_mod {
         private int Ticks { get; set; }
         private void OnTick(object sender, EventArgs e) {
 
-            var playerPed = _player.Character;
+            var playerPed = Player.Character;
             var pos = playerPed.Position;
 
             foreach (var team in Teams) {

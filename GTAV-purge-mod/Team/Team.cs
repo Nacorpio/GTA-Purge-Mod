@@ -15,6 +15,14 @@ namespace GTAV_purge_mod.Team {
             Vehicles = vehicles;
             Members = members;
 
+            foreach (TeamMember member in members) {
+                member.Team = this;
+            }
+
+            foreach (TeamVehicle vehicle in vehicles) {
+                vehicle.Team = this;
+            }
+
             Group = World.AddRelationShipGroup("group." + name.ToLower());
 
         }
@@ -51,6 +59,9 @@ namespace GTAV_purge_mod.Team {
             foreach (var member in Members) {
                 member.Update(tick);
             }
+            foreach (var vehicle in Vehicles) {
+                vehicle.Update(tick);
+            }
         }
 
         /// <summary>
@@ -64,7 +75,7 @@ namespace GTAV_purge_mod.Team {
         /// <returns></returns>
         public TeamVehicle SpawnVehicle(int index, float x, float y, float z, bool mods) {
             var vehicle = Vehicles[index];
-            vehicle.OwnerTeam = this;
+            vehicle.Team = this;
 
             if (!vehicle.IsActive) {
                 vehicle.Create(new Vector3(x, y, z), mods);

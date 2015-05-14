@@ -17,7 +17,7 @@ namespace GTAV_purge_mod.Team {
         private VehicleColor _secondaryColor = VehicleColor.MetallicWhite;
         private VehicleWindowTint _windowTint = VehicleWindowTint.Stock;
 
-        public Team OwnerTeam;
+        private Team _team;
 
         public TeamVehicle(VehicleHash modelHash) {
             _vehicleHash = modelHash;
@@ -28,6 +28,11 @@ namespace GTAV_purge_mod.Team {
         }
 
         public bool IsActive { get; private set; }
+
+        public Team Team {
+            get { return _team; }
+            set { _team = value; }
+        }
 
         public VehicleHash ModelHash {
             get { return _vehicleHash; }
@@ -104,7 +109,7 @@ namespace GTAV_purge_mod.Team {
 
         private void UpdateMembers() {
 
-            if (OwnerTeam != null && Vehicle != null) {
+            if (Team != null && Vehicle != null) {
 
                 _membersInVehicle.Clear();
 
@@ -114,9 +119,9 @@ namespace GTAV_purge_mod.Team {
                     var e = Vehicle.GetPedOnSeat((VehicleSeat) Enum.Parse(typeof (VehicleSeat), i.ToString()));
 
                     // Checks if the ped is a team member.
-                    if (OwnerTeam.IsTeamMember(e)) {
+                    if (Team.IsTeamMember(e)) {
 
-                        _membersInVehicle.Add(OwnerTeam.ToTeamMember(e));
+                        _membersInVehicle.Add(Team.ToTeamMember(e));
 
                     }
 
@@ -128,7 +133,7 @@ namespace GTAV_purge_mod.Team {
 
         public TeamVehicle AddMember(TeamMember member, VehicleSeat seat) {
 
-            if (OwnerTeam != null && Vehicle != null) {
+            if (Team != null && Vehicle != null) {
 
                 if (Vehicle.GetPedOnSeat(seat) == null) {
                     member.Ped.Task.WarpIntoVehicle(Vehicle, seat);
@@ -150,9 +155,9 @@ namespace GTAV_purge_mod.Team {
 
         public TeamVehicle AddMember(TeamMember.TeamMemberPosition position, VehicleSeat seat) {
 
-            if (OwnerTeam != null && Vehicle != null) {
+            if (Team != null && Vehicle != null) {
 
-                var member = OwnerTeam.MembersOfPosition(position, true);
+                var member = Team.MembersOfPosition(position, true);
                 TeamMember result = null;
 
                 if (Vehicle.GetPedOnSeat(seat) != null) {
@@ -183,9 +188,9 @@ namespace GTAV_purge_mod.Team {
 
         public TeamVehicle AddMember(TeamMember.TeamMemberPosition position) {
 
-            if (OwnerTeam != null && Vehicle != null) {
+            if (Team != null && Vehicle != null) {
 
-                var member = OwnerTeam.MembersOfPosition(position, true)[0];
+                var member = Team.MembersOfPosition(position, true)[0];
                 member.Ped.Task.WarpIntoVehicle(Vehicle, member.PreferredSeat);
                 UpdateMembers();
 
