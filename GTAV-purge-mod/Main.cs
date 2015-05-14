@@ -17,6 +17,7 @@ namespace GTAV_purge_mod {
         public static Team.Team TeamPurgeCops;
 
         public static UIText DebugText;
+
         private readonly Player _player;
         private readonly List<Team.Team> _teams = new List<Team.Team>();
 
@@ -31,72 +32,23 @@ namespace GTAV_purge_mod {
             _teams.Add(_teamHampurgers);
 
             Tick += Main_Tick;
-            KeyDown += OnKeyDown;
 
         }
 
         private int Ticks { get; set; }
-
-        private void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {
-            if (keyEventArgs.KeyCode == Keys.F3) {
-                View.AddMenu(new Menu("The Purge", new MenuItem[] {
-                    new MenuButton("Teams", "The teams participating on\nthis years purge", OpenTeamsMenu)
-                }));
-            }
-        }
-
-        private void OpenTeamsMenu() {
-
-            var buttons = new MenuItem[_teams.Count];
-
-            for (var i = 0; i < _teams.Count; i++) {
-                var e = _teams[i];
-                MenuButton btn;
-
-                Action teamAction = () => { OpenTeamMenu(e); };
-
-                btn = new MenuButton(e.Name, teamAction);
-                buttons[i] = btn;
-            }
-
-            var menu = new Menu("Teams", buttons) {
-                HasFooter = false
-            };
-
-            View.AddMenu(menu);
-
-        }
-
-        private void OpenTeamMenu(Team.Team t) {
-
-            var menu = new Menu(t.Name, new MenuItem[] {
-                new MenuButton("Members (" + t.Members.Length + ")", OpenTeamMembers),
-                new MenuButton("Vehicles (" + t.Vehicles.Length + ")", OpenTeamVehicles),
-                new MenuButton("Weapons", OpenTeamWeapons)
-            });
-
-            View.AddMenu(menu);
-
-        }
-
-        private void OpenTeamMembers() {}
-
-        private void OpenTeamWeapons() {}
-
-        private void OpenTeamVehicles() {}
 
         private void Main_Tick(object sender, EventArgs e) {
 
             var playerPed = _player.Character;
             var pos = playerPed.Position;
 
-            foreach (Team.Team team in _teams) {
+            foreach (var team in _teams) {
                 team.DoTick(Ticks);
             }
 
             if (Ticks == 1) {
 
-                TeamVehicle vehicle = _teamHampurgers.SpawnVehicleWithMembers(0, new[] {
+                var vehicle = _teamHampurgers.SpawnVehicleWithMembers(0, new[] {
 
                     TeamMember.TeamMemberPosition.Engineer,
                     TeamMember.TeamMemberPosition.Gunman,
@@ -104,7 +56,6 @@ namespace GTAV_purge_mod {
                     TeamMember.TeamMemberPosition.Tank
 
                 }, pos, true);
-
 
             }
 
