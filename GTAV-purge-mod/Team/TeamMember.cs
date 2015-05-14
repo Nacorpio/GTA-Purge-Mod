@@ -26,6 +26,7 @@ namespace GTAV_purge_mod.Team {
         private readonly PedHash _modelHash;
         private TeamMemberPosition _position = TeamMemberPosition.Gunman;
 
+        private WeaponHash[] _weapons = new WeaponHash[] {WeaponHash.Knife};
         private VehicleSeat _preferredSeat = VehicleSeat.Any;
         private WeaponHash _preferredWeapon;
 
@@ -39,20 +40,23 @@ namespace GTAV_purge_mod.Team {
         private float _heading;
 
         public TeamMember(Ped ped, bool changes) {
+
             Ped = ped;
-            _modelHash = (PedHash) ped.Model.Hash;
 
             if (changes) {
                 ApplyChanges();
             }
+
         }
 
         public TeamMember(PedHash modelHash) {
+
             _modelHash = modelHash;
+
         }
 
         public WeaponHash PreferredWeapon {
-            get { return _preferredWeapon; }
+            private get { return _preferredWeapon; }
             set { _preferredWeapon = value; }
         }
 
@@ -61,7 +65,10 @@ namespace GTAV_purge_mod.Team {
             set { _preferredSeat = value; }
         }
 
-        public WeaponHash[] Weapons { get; set; }
+        public WeaponHash[] Weapons {
+            private get { return _weapons; }
+            set { _weapons = value; }
+        }
 
         public TeamMemberPosition Position {
             get { return _position; }
@@ -120,22 +127,27 @@ namespace GTAV_purge_mod.Team {
         }
 
         public void Update(int tick) {
+
             if (Ped != null && Ped.IsAlive) {
+
                 IsActive = true;
-            }
-            else {
+
+            } else {
+
                 IsActive = false;
+
             }
+
         }
 
         private void ApplyChanges() {
+
             if (Ped != null) {
 
                 // void GIVE_WEAPON_TO_PED(int pedHandle, Hash weaponAssetHash, int ammoCount, BOOL equipNow, BOOL isAmmoLoaded)
 
                 foreach (WeaponHash weapon in Weapons) {
                     Ped.Weapons.Give(weapon, 100, true, true);
-                    Ped.Weapons.Select(Ped.Weapons[weapon]);
                 }
 
                 if (Ped.Weapons[PreferredWeapon] != null) {
@@ -149,9 +161,11 @@ namespace GTAV_purge_mod.Team {
                 Ped.Health = _health;
 
             }
+
         }
 
         public TeamMember Create(Vector3 pos, bool changes) {
+
             var ped = World.CreatePed(_modelHash, pos);
 
             Ped = ped;
@@ -162,6 +176,7 @@ namespace GTAV_purge_mod.Team {
             }
 
             return this;
+
         }
     }
 

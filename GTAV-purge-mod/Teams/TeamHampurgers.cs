@@ -10,7 +10,10 @@ namespace GTAV_purge_mod.Teams {
 
             new[] {
 
-                new TeamVehicle(VehicleHash.JB700),
+                new TeamVehicle(VehicleHash.Baller2) {
+                    
+                },
+
                 new TeamVehicle(VehicleHash.Sandking2),
                 new TeamVehicle(VehicleHash.DLoader),
                 new TeamVehicle(VehicleHash.Technical)
@@ -42,8 +45,9 @@ namespace GTAV_purge_mod.Teams {
                 new TeamMember(PedHash.Bouncer01SMM) {
 
                     Money = 0,
-                    Health = 100,
+                    Health = 1000,
                     Position = TeamMember.TeamMemberPosition.Tank,
+                    PreferredSeat = VehicleSeat.Driver,
 
                     Weapons = new[] {
                         WeaponHash.GrenadeLauncher,

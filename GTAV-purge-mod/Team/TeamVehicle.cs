@@ -55,6 +55,7 @@ namespace GTAV_purge_mod.Team {
         public Vehicle Vehicle { get; private set; }
 
         public TeamVehicle Create(Vector3 pos, bool mods) {
+
             var vehicle = World.CreateVehicle(_vehicleHash, pos);
 
             Vehicle = vehicle;
@@ -65,18 +66,25 @@ namespace GTAV_purge_mod.Team {
             }
 
             return this;
+
         }
 
         public void Update(int tick) {
+
             if (Vehicle != null && !Vehicle.IsDead) {
+
                 IsActive = true;
-            }
-            else {
+
+            } else {
+
                 IsActive = false;
+
             }
+
         }
 
         private void EnableMods() {
+
             Function.Call(Hash.SET_VEHICLE_MOD_KIT, Vehicle.Handle, 0);
 
             Vehicle.PrimaryColor = _primaryColor;
@@ -84,63 +92,111 @@ namespace GTAV_purge_mod.Team {
             Vehicle.WindowTint = _windowTint;
 
             for (var i = 0; i < _mods.Count; i++) {
+
                 var mod = _mods.Keys.ToList()[i];
                 var value = _mods[mod];
 
                 Vehicle.SetMod(mod, value, true);
+
             }
+
         }
 
         private void UpdateMembers() {
+
             if (OwnerTeam != null && Vehicle != null) {
+
                 _membersInVehicle.Clear();
+
                 for (var i = 0; i < Vehicle.PassengerSeats; i++) {
+
                     // Gets the enum with the specified value.
                     var e = Vehicle.GetPedOnSeat((VehicleSeat) Enum.Parse(typeof (VehicleSeat), i.ToString()));
 
                     // Checks if the ped is a team member.
                     if (OwnerTeam.IsTeamMember(e)) {
+
                         _membersInVehicle.Add(OwnerTeam.ToTeamMember(e));
+
                     }
+
                 }
+
             }
+
         }
 
-        public TeamVehicle AddMember(TeamMember.TeamMemberPosition position, VehicleSeat seat) {
+        public TeamVehicle AddMember(TeamMember member, VehicleSeat seat) {
+
             if (OwnerTeam != null && Vehicle != null) {
-                var member = OwnerTeam.MembersOfPosition(position, true);
-                TeamMember result = null;
+                if (Vehicle.GetPedOnSeat(seat) == null) {
+             
+                    member.Ped.Task.WarpIntoVehicle(Vehicle, seat);
 
-                foreach (TeamMember e in member) {
-                    if (!e.Ped.IsInVehicle(Vehicle)) {
-                        result = e;
-                    }
-                }
-
-                if (result != null) {
-                    result.Ped.Task.WarpIntoVehicle(Vehicle, seat);
-                    // UpdateMembers();
                 }
             }
 
             return this;
+
+        }
+
+        public TeamVehicle AddMember(TeamMember member) {
+            return AddMember(member, member.PreferredSeat);
+        }
+
+        public TeamVehicle AddMember(TeamMember.TeamMemberPosition position, VehicleSeat seat) {
+
+            if (OwnerTeam != null && Vehicle != null) {
+
+                var member = OwnerTeam.MembersOfPosition(position, true);
+                TeamMember result = null;
+
+                foreach (TeamMember e in member) {
+
+                    if (!e.Ped.IsInVehicle(Vehicle)) {
+
+                        result = e;
+
+                    }
+
+                }
+
+                if (result != null) {
+
+                    result.Ped.Task.WarpIntoVehicle(Vehicle, seat);
+                    UpdateMembers();
+
+                }
+
+            }
+
+            return this;
+
         }
 
         public TeamVehicle AddMember(TeamMember.TeamMemberPosition position) {
+
             if (OwnerTeam != null && Vehicle != null) {
+
                 var member = OwnerTeam.MembersOfPosition(position, true)[0];
                 member.Ped.Task.WarpIntoVehicle(Vehicle, member.PreferredSeat);
-                // UpdateMembers();
+                UpdateMembers();
+
             }
 
             return this;
         }
 
         private TeamVehicle AddMod(VehicleMod mod, int index) {
+
             if (Vehicle != null) {
+
                 Vehicle.SetMod(mod, index, true);
+
             }
+
             return this;
+
         }
 
         public TeamVehicle AddAllModsMax() {
@@ -148,8 +204,10 @@ namespace GTAV_purge_mod.Team {
             var modStrings = Enum.GetNames(typeof (VehicleMod));
 
             foreach (string s in modStrings) {
+
                 var mod = (VehicleMod) Enum.Parse(typeof (VehicleMod), s);
                 AddModMax(mod);
+
             }
 
             return this;
@@ -157,11 +215,17 @@ namespace GTAV_purge_mod.Team {
         }
 
         private TeamVehicle AddModMax(VehicleMod mod) {
+
             var max = Function.Call<int>(Hash.GET_NUM_VEHICLE_MODS, Vehicle, (int) mod);
+
             if (max != 0) {
+
                 return AddMod(mod, max - 1);
+
             }
+
             return this;
+
         }
 
         public bool HasWeapons() {

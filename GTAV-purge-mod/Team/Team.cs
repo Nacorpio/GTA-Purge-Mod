@@ -3,6 +3,7 @@ using GTA;
 using GTA.Math;
 
 namespace GTAV_purge_mod.Team {
+
     public class Team {
 
         private readonly string _name;

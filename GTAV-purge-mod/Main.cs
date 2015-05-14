@@ -16,7 +16,7 @@ namespace GTAV_purge_mod {
         public static Team.Team TeamNoPurgeIntended;
         public static Team.Team TeamPurgeCops;
 
-        private readonly UIText _debugText;
+        public static UIText DebugText;
         private readonly Player _player;
         private readonly List<Team.Team> _teams = new List<Team.Team>();
 
@@ -25,7 +25,7 @@ namespace GTAV_purge_mod {
             Ticks = 0;
 
             _player = Game.Player;
-            _debugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
+            DebugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
 
             _teamHampurgers = new TeamHampurgers();
             _teams.Add(_teamHampurgers);
@@ -91,10 +91,17 @@ namespace GTAV_purge_mod {
             }
 
             if (Ticks == 1) {
-                TeamMember member = _teamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Tank, pos, true);
+
+                TeamVehicle vehicle = _teamHampurgers.SpawnVehicle(0, pos, true);
+
+                TeamMember tankMember = _teamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Tank, pos, true);
+                TeamMember gunMember1 = _teamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Gunman, pos, true);
+
+                vehicle.AddMember(tankMember).AddMember(gunMember1);
+
             }
 
-            _debugText.Draw();
+            DebugText.Draw();
             Ticks++;
 
         }
