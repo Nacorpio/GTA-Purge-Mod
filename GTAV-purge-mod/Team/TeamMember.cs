@@ -1,7 +1,6 @@
 ﻿using GTA;
 using GTA.Math;
 using GTA.Native;
-using GTAV_purge_mod.Position;
 
 namespace GTAV_purge_mod.Team {
 
@@ -26,8 +25,18 @@ namespace GTAV_purge_mod.Team {
 
         private readonly PedHash _modelHash;
         private TeamMemberPosition _position = TeamMemberPosition.Gunman;
+
         private VehicleSeat _preferredSeat = VehicleSeat.Any;
+        private WeaponHash _preferredWeapon;
+
         private TeamMemberRank _rank = TeamMemberRank.StreetRat;
+
+        private int _accuracy;
+        private int _armor;
+        private int _money;
+        private int _health;
+
+        private float _heading;
 
         public TeamMember(Ped ped, bool changes) {
             Ped = ped;
@@ -38,10 +47,13 @@ namespace GTAV_purge_mod.Team {
             }
         }
 
-        public void OnHealFromMedic(PositionMedic medic) {}
-
         public TeamMember(PedHash modelHash) {
             _modelHash = modelHash;
+        }
+
+        public WeaponHash PreferredWeapon {
+            get { return _preferredWeapon; }
+            set { _preferredWeapon = value; }
         }
 
         public VehicleSeat PreferredSeat {
@@ -62,58 +74,38 @@ namespace GTAV_purge_mod.Team {
         }
 
         private int Accuracy {
-            get { return (IsActive ? Ped.Accuracy : Accuracy); }
-            set {
-                if (IsActive) {
-                    Ped.Accuracy = value;
-                } else {
-                    Accuracy = value;
-                }
+            get {
+                return (IsActive ? Ped.Accuracy : _accuracy);
             }
+            set { _accuracy = value; }
         }
 
         public int Armor {
-            get { return (IsActive ? Ped.Health : Armor); }
-            set {
-                if (IsActive) {
-                    Ped.Armor = value;
-            } else {
-                    Armor = value;
-                }
+            get {
+                return (IsActive ? Ped.Health : _armor);
             }
+            set { _armor = value; }
         }
 
         public int Money {
-            get { return (IsActive ? Ped.Money : Money); }
-            set {
-                if (IsActive) {
-                    Ped.Money = value;
-                } else {
-                    Money = value;
-                }
+            get {
+                return (IsActive ? Ped.Money : _money);
             }
+            set { _money = value; }
         }
 
         public float Heading {
-            get { return (IsActive ? Ped.Heading : Heading); }
-            set {
-                if (IsActive) {
-                    Ped.Heading = value;
-                } else {
-                    Heading = value;
-                }
+            get {
+                return (IsActive ? Ped.Heading : _heading);
             }
+            set { _heading = value; }
         }
 
         public int Health {
-            get { return (IsActive ? Ped.Health : Health); }
-            set {
-                if (IsActive) {
-                    Ped.Health = value;
-                } else {
-                    Health = value;
-                }
+            get {
+                return (IsActive ? Ped.Health : _health);
             }
+            set { _health = value; }
         }
 
         public bool IsActive { get; private set; }
@@ -141,16 +133,20 @@ namespace GTAV_purge_mod.Team {
 
                 // void GIVE_WEAPON_TO_PED(int pedHandle, Hash weaponAssetHash, int ammoCount, BOOL equipNow, BOOL isAmmoLoaded)
 
-                for (var i = 0; i < Weapons.Length; i++) {
-                    var e = Weapons[i];
-                    Ped.Weapons.Give(e, 100, true, true);
+                foreach (WeaponHash weapon in Weapons) {
+                    Ped.Weapons.Give(weapon, 100, true, true);
+                    Ped.Weapons.Select(Ped.Weapons[weapon]);
                 }
 
-                Ped.Accuracy = Accuracy;
-                Ped.Armor = Armor;
-                Ped.Money = Money;
-                Ped.Heading = Heading;
-                Ped.Health = Health;
+                if (Ped.Weapons[PreferredWeapon] != null) {
+                    Ped.Weapons.Select(Ped.Weapons[PreferredWeapon]);
+                }
+
+                Ped.Accuracy = _accuracy;
+                Ped.Armor = _armor;
+                Ped.Money = _money;
+                Ped.Heading = _heading;
+                Ped.Health = _health;
 
             }
         }

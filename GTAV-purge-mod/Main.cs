@@ -11,7 +11,8 @@ using MenuItem = GTA.MenuItem;
 namespace GTAV_purge_mod {
     public class Main : Script {
 
-        public static TeamHampurgers TeamHampurgers;
+        private static TeamHampurgers _teamHampurgers;
+
         public static Team.Team TeamNoPurgeIntended;
         public static Team.Team TeamPurgeCops;
 
@@ -20,18 +21,21 @@ namespace GTAV_purge_mod {
         private readonly List<Team.Team> _teams = new List<Team.Team>();
 
         public Main() {
+
             Ticks = 0;
 
             _player = Game.Player;
             _debugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
 
-            TeamHampurgers = new TeamHampurgers();
+            _teamHampurgers = new TeamHampurgers();
+            _teams.Add(_teamHampurgers);
 
             Tick += Main_Tick;
             KeyDown += OnKeyDown;
+
         }
 
-        public int Ticks { get; private set; }
+        private int Ticks { get; set; }
 
         private void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {
             if (keyEventArgs.KeyCode == Keys.F3) {
@@ -54,8 +58,9 @@ namespace GTAV_purge_mod {
                 buttons[i] = btn;
             }
 
-            var menu = new Menu("Teams", buttons);
-            menu.HasFooter = false;
+            var menu = new Menu("Teams", buttons) {
+                HasFooter = false
+            };
 
             View.AddMenu(menu);
         }
@@ -81,12 +86,12 @@ namespace GTAV_purge_mod {
             var playerPed = _player.Character;
             var pos = playerPed.Position;
 
-            for (var i = 0; i < _teams.Count; i++) {
-                _teams[i].DoTick(Ticks);
+            foreach (Team.Team team in _teams) {
+                team.DoTick(Ticks);
             }
 
             if (Ticks == 1) {
-                // var member = TeamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Gunman, pos, true);
+                TeamMember member = _teamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Tank, pos, true);
             }
 
             _debugText.Draw();

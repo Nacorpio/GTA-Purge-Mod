@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using GTA;
 using GTA.Math;
-using GTAV_purge_mod.Position;
 
 namespace GTAV_purge_mod.Team {
     public class Team {
 
         private readonly string _name;
-        private readonly List<MemberPosition> positions;
 
         protected Team(string name, TeamVehicle[] vehicles, TeamMember[] members) {
 
@@ -49,9 +47,8 @@ namespace GTAV_purge_mod.Team {
         #region "Functions"
 
         public void DoTick(int tick) {
-            for (var i = 0; i < Members.Length; i++) {
-                var e = Members[i];
-                e.Update(tick);
+            foreach (var member in Members) {
+                member.Update(tick);
             }
         }
 
@@ -171,22 +168,23 @@ namespace GTAV_purge_mod.Team {
             if (InactiveCountOf(position) >= 1) {
 
                 var member = SpawnMember(InactiveOf(position), vect, changes);
-                MemberPosition memberPos = null;
+
+                // MemberPosition memberPos = null;
 
                 // Add a new element to the list, depending on the specified position.
-                switch (position) {
+                //switch (position) {
 
-                    case TeamMember.TeamMemberPosition.Medic:
+                //    case TeamMember.TeamMemberPosition.Medic:
 
-                        memberPos = new PositionMedic(member);
-                        positions.Add(memberPos);
+                //        memberPos = new PositionMedic(member);
+                //        // positions.Add(memberPos);
 
-                        break;
+                //        break;
 
-                }
+                //}
 
-                if (memberPos != null)
-                    memberPos.OnSpawn();
+                //if (memberPos != null)
+                //    memberPos.OnSpawn();
 
                 return member;
 
@@ -201,7 +199,7 @@ namespace GTAV_purge_mod.Team {
         /// </summary>
         /// <param name="position">The position to check.</param>
         /// <returns></returns>
-        public int InactiveOf(TeamMember.TeamMemberPosition position) {
+        private int InactiveOf(TeamMember.TeamMemberPosition position) {
             for (var i = 0; i < Members.Length; i++) {
                 var e = Members[i];
                 if (e.Position == position && !e.IsActive) {
@@ -216,7 +214,7 @@ namespace GTAV_purge_mod.Team {
         /// </summary>
         /// <param name="position">The position to check.</param>
         /// <returns></returns>
-        public int MemberCount(TeamMember.TeamMemberPosition position) {
+        private int MemberCount(TeamMember.TeamMemberPosition position) {
             var result = 0;
             for (var i = 0; i < Members.Length; i++) {
                 var e = Members[i];
@@ -233,10 +231,9 @@ namespace GTAV_purge_mod.Team {
         /// </summary>
         /// <param name="position">The position to check.</param>
         /// <returns></returns>
-        public int ActiveOf(TeamMember.TeamMemberPosition position) {
+        private int ActiveOf(TeamMember.TeamMemberPosition position) {
             var result = 0;
-            for (var i = 0; i < Members.Length; i++) {
-                var e = Members[i];
+            foreach (TeamMember e in Members) {
                 if (e.Position == position && e.IsActive) {
                     result++;
                 }
@@ -249,7 +246,7 @@ namespace GTAV_purge_mod.Team {
         /// </summary>
         /// <param name="position">The position to check.</param>
         /// <returns></returns>
-        public int InactiveCountOf(TeamMember.TeamMemberPosition position) {
+        private int InactiveCountOf(TeamMember.TeamMemberPosition position) {
             return MemberCount(position) - ActiveOf(position);
         }
 

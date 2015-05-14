@@ -4,17 +4,20 @@ using System.Linq;
 using GTA;
 using GTA.Math;
 using GTA.Native;
-using GTAV_purge_mod.Team;
 
-namespace GTAV_purge_mod {
+namespace GTAV_purge_mod.Team {
+
     public class TeamVehicle {
+
         private readonly List<TeamMember> _membersInVehicle = new List<TeamMember>();
         private readonly Dictionary<VehicleMod, int> _mods = new Dictionary<VehicleMod, int>();
         private readonly VehicleHash _vehicleHash;
+
         private VehicleColor _primaryColor = VehicleColor.MetallicWhite;
         private VehicleColor _secondaryColor = VehicleColor.MetallicWhite;
         private VehicleWindowTint _windowTint = VehicleWindowTint.Stock;
-        public Team.Team OwnerTeam;
+
+        public Team OwnerTeam;
 
         public TeamVehicle(VehicleHash modelHash) {
             _vehicleHash = modelHash;
@@ -108,8 +111,7 @@ namespace GTAV_purge_mod {
                 var member = OwnerTeam.MembersOfPosition(position, true);
                 TeamMember result = null;
 
-                for (var i = 0; i < member.Count; i++) {
-                    var e = member[i];
+                foreach (TeamMember e in member) {
                     if (!e.Ped.IsInVehicle(Vehicle)) {
                         result = e;
                     }
@@ -134,7 +136,7 @@ namespace GTAV_purge_mod {
             return this;
         }
 
-        public TeamVehicle AddMod(VehicleMod mod, int index) {
+        private TeamVehicle AddMod(VehicleMod mod, int index) {
             if (Vehicle != null) {
                 Vehicle.SetMod(mod, index, true);
             }
@@ -142,16 +144,19 @@ namespace GTAV_purge_mod {
         }
 
         public TeamVehicle AddAllModsMax() {
+
             var modStrings = Enum.GetNames(typeof (VehicleMod));
-            for (var i = 0; i < modStrings.Length; i++) {
-                var mod = (VehicleMod) Enum.Parse(typeof (VehicleMod), modStrings[i]);
+
+            foreach (string s in modStrings) {
+                var mod = (VehicleMod) Enum.Parse(typeof (VehicleMod), s);
                 AddModMax(mod);
             }
 
             return this;
+
         }
 
-        public TeamVehicle AddModMax(VehicleMod mod) {
+        private TeamVehicle AddModMax(VehicleMod mod) {
             var max = Function.Call<int>(Hash.GET_NUM_VEHICLE_MODS, Vehicle, (int) mod);
             if (max != 0) {
                 return AddMod(mod, max - 1);

@@ -41,13 +41,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
-    <Compile Include="Position\MemberPosition.cs" />
-    <Compile Include="Position\PositionMedic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Teams\TeamHampurgers.cs" />
     <Compile Include="Team\Team.cs" />
     <Compile Include="Team\TeamMember.cs" />
     <Compile Include="Team\TeamVehicle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Position\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
