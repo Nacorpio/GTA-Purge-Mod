@@ -1,61 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.Drawing;
+using System.Windows.Forms;
 using GTA;
-using GTA.Native;
+using GTAV_purge_mod.Team;
+using GTAV_purge_mod.Teams;
+using Menu = GTA.Menu;
+using MenuItem = GTA.MenuItem;
 
-namespace GTAV_purge_mod
-{
-
+namespace GTAV_purge_mod {
     public class Main : Script {
 
-        private Player player;
-        private int ticks = 0;
+        public static TeamHampurgers TeamHampurgers;
+        public static Team.Team TeamNoPurgeIntended;
+        public static Team.Team TeamPurgeCops;
+
+        private readonly UIText _debugText;
+        private readonly Player _player;
+        private readonly List<Team.Team> _teams = new List<Team.Team>();
 
         public Main() {
+            Ticks = 0;
 
-            player = Game.Player;
+            _player = Game.Player;
+            _debugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
+
+            TeamHampurgers = new TeamHampurgers();
+
             Tick += Main_Tick;
-
+            KeyDown += OnKeyDown;
         }
+
+        public int Ticks { get; private set; }
+
+        private void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {
+            if (keyEventArgs.KeyCode == Keys.F3) {
+                View.AddMenu(new Menu("The Purge", new MenuItem[] {
+                    new MenuButton("Teams", "The teams participating on\nthis years purge", OpenTeamsMenu)
+                }));
+            }
+        }
+
+        private void OpenTeamsMenu() {
+            var buttons = new MenuItem[_teams.Count];
+
+            for (var i = 0; i < _teams.Count; i++) {
+                var e = _teams[i];
+                MenuButton btn;
+
+                Action teamAction = () => { OpenTeamMenu(e); };
+
+                btn = new MenuButton(e.Name, teamAction);
+                buttons[i] = btn;
+            }
+
+            var menu = new Menu("Teams", buttons);
+            menu.HasFooter = false;
+
+            View.AddMenu(menu);
+        }
+
+        private void OpenTeamMenu(Team.Team t) {
+            var menu = new Menu(t.Name, new MenuItem[] {
+                new MenuButton("Members (" + t.Members.Length + ")", OpenTeamMembers),
+                new MenuButton("Vehicles (" + t.Vehicles.Length + ")", OpenTeamVehicles),
+                new MenuButton("Weapons", OpenTeamWeapons)
+            });
+
+            View.AddMenu(menu);
+        }
+
+        private void OpenTeamMembers() {}
+
+        private void OpenTeamWeapons() {}
+
+        private void OpenTeamVehicles() {}
 
         private void Main_Tick(object sender, EventArgs e) {
 
-            if (ticks == 0) {
+            var playerPed = _player.Character;
+            var pos = playerPed.Position;
 
-                // During the first tick, initializations can be made.
-                FirstTick();
-
-            } else if (ticks > 0) {
-
-                tick(ticks);
-
+            for (var i = 0; i < _teams.Count; i++) {
+                _teams[i].DoTick(Ticks);
             }
 
-            ticks++;
-
-        }
-
-        private void tick(int tick) {
-
-            Ped ped = player.Character;
-            Team t = new Team("Team1", VehicleHash.Schafter2, VehicleHash.Sultan);
-
-        }
-
-        private void FirstTick() {
-
-        }
-
-        public int Ticks {
-            get {
-                return ticks;
+            if (Ticks == 1) {
+                // var member = TeamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Gunman, pos, true);
             }
-        }
 
+            _debugText.Draw();
+            Ticks++;
+
+        }
     }
-
 }
