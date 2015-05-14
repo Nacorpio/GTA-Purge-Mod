@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GTA;
 using GTAV_purge_mod.Team;
 
 namespace GTAV_purge_mod.Position {
 
-    public class MemberPosition {
+    public abstract class MemberPosition {
 
         private readonly TeamMember _member;
 
@@ -17,11 +22,15 @@ namespace GTAV_purge_mod.Position {
         }
 
         public TeamMember Member {
-            get { return _member; }
+            get {
+                return _member;
+            }
         }
 
         public Action SpawnAction {
-            get { return _spawnAction; }
+            get {
+                return _spawnAction;
+            }
         }
 
         public Action<object[]>[] Action {
@@ -33,6 +42,8 @@ namespace GTAV_purge_mod.Position {
         public void OnSpawn() {
             _spawnAction.Invoke();
         }
+
+        public abstract void OnOpenMenu(Viewport view);
 
         public void Use(int index, object[] args) {
             _actions[index].Invoke(args);

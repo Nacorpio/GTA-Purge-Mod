@@ -38,6 +38,8 @@ namespace GTAV_purge_mod {
             Tick += OnTick;
             KeyDown += OnKeyDown;
 
+            Interval = 500;
+
         }
 
         private void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {

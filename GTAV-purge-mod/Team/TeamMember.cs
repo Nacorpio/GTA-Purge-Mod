@@ -26,7 +26,7 @@ namespace GTAV_purge_mod.Team {
         private readonly PedHash _modelHash;
         private TeamMemberPosition _position = TeamMemberPosition.Gunman;
 
-        private WeaponHash[] _weapons = new WeaponHash[] {WeaponHash.Knife};
+        private WeaponHash[] _weapons;
         private VehicleSeat _preferredSeat = VehicleSeat.Any;
         private WeaponHash _preferredWeapon;
         private Team _team;
@@ -37,6 +37,7 @@ namespace GTAV_purge_mod.Team {
         private int _armor;
         private int _money;
         private int _health;
+        private int _maxHealth;
 
         private float _heading;
 
@@ -121,6 +122,13 @@ namespace GTAV_purge_mod.Team {
             set { _health = value; }
         }
 
+        public int MaxHealth {
+            get {
+                return (IsActive ? Ped.MaxHealth : _maxHealth);
+            }
+            set { _maxHealth = value; }
+        }
+
         public bool IsActive { get; private set; }
 
         public Ped Ped {
@@ -146,13 +154,11 @@ namespace GTAV_purge_mod.Team {
 
         }
 
-        public void ApplyChanges() {
+        private void ApplyChanges() {
 
             if (Ped != null && IsActive) {
 
-                // void GIVE_WEAPON_TO_PED(int pedHandle, Hash weaponAssetHash, int ammoCount, BOOL equipNow, BOOL isAmmoLoaded)
-
-                foreach (WeaponHash weapon in Weapons) {
+                foreach (var weapon in Weapons) {
                     Ped.Weapons.Give(weapon, 100, true, true);
                 }
 
@@ -164,6 +170,8 @@ namespace GTAV_purge_mod.Team {
                 Ped.Armor = _armor;
                 Ped.Money = _money;
                 Ped.Heading = _heading;
+
+                Ped.MaxHealth = _maxHealth;
                 Ped.Health = _health;
 
             }
