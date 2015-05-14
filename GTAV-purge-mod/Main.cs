@@ -9,6 +9,7 @@ using Menu = GTA.Menu;
 using MenuItem = GTA.MenuItem;
 
 namespace GTAV_purge_mod {
+
     public class Main : Script {
 
         private static TeamHampurgers _teamHampurgers;
@@ -16,46 +17,44 @@ namespace GTAV_purge_mod {
         public static Team.Team TeamNoPurgeIntended;
         public static Team.Team TeamPurgeCops;
 
+        public static Viewport MainViewport;
         public static UIText DebugText;
 
         private readonly Player _player;
-        private readonly List<Team.Team> _teams = new List<Team.Team>();
+        public static readonly List<Team.Team> Teams = new List<Team.Team>();
 
         public Main() {
 
             Ticks = 0;
 
             _player = Game.Player;
+
+            MainViewport = View;
             DebugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
 
             _teamHampurgers = new TeamHampurgers();
-            _teams.Add(_teamHampurgers);
+            Teams.Add(_teamHampurgers);
 
-            Tick += Main_Tick;
+            Tick += OnTick;
+            KeyDown += OnKeyDown;
 
         }
 
-        private int Ticks { get; set; }
+        private void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {
+            Menus.ProcessKey(keyEventArgs);
+        }
 
-        private void Main_Tick(object sender, EventArgs e) {
+        private int Ticks { get; set; }
+        private void OnTick(object sender, EventArgs e) {
 
             var playerPed = _player.Character;
             var pos = playerPed.Position;
 
-            foreach (var team in _teams) {
+            foreach (var team in Teams) {
                 team.DoTick(Ticks);
             }
 
             if (Ticks == 1) {
-
-                var vehicle = _teamHampurgers.SpawnVehicleWithMembers(0, new[] {
-
-                    TeamMember.TeamMemberPosition.Engineer,
-                    TeamMember.TeamMemberPosition.Gunman,
-                    TeamMember.TeamMemberPosition.Gunman,
-                    TeamMember.TeamMemberPosition.Tank
-
-                }, pos, true);
 
             }
 
@@ -63,5 +62,7 @@ namespace GTAV_purge_mod {
             Ticks++;
 
         }
+
     }
+
 }
