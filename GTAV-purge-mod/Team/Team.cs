@@ -84,6 +84,28 @@ namespace GTAV_purge_mod.Team {
             return SpawnVehicle(index, vect.X, vect.Y, vect.Z, mods);
         }
 
+        public TeamVehicle SpawnVehicleWithMembers(int index, TeamMember.TeamMemberPosition[] positions, Vector3 vect, bool mods) {
+
+            TeamVehicle vehicle = SpawnVehicle(index, vect, mods);
+
+            foreach (TeamMember.TeamMemberPosition pos in positions) {
+
+                if (InactiveCountOf(pos) >= 1) {
+                    TeamMember member = SpawnMember(pos, vect, true);
+                    vehicle.AddMember(member);
+                }
+
+                else
+                {
+                    Main.DebugText.Caption = "No available inactive member (" + pos.ToString() + ").";
+                }
+
+            }
+
+            return vehicle;
+
+        }
+
         /// <summary>
         ///     Spawns a member at the specified index on the specified Vector3.
         /// </summary>
@@ -211,7 +233,7 @@ namespace GTAV_purge_mod.Team {
         }
 
         /// <summary>
-        ///     Returns how many members that are available of the specified position.
+        ///     Returns how many members that are available of the specified position (both active and inactive).
         /// </summary>
         /// <param name="position">The position to check.</param>
         /// <returns></returns>

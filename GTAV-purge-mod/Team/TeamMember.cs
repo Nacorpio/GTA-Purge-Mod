@@ -142,7 +142,7 @@ namespace GTAV_purge_mod.Team {
 
         private void ApplyChanges() {
 
-            if (Ped != null) {
+            if (Ped != null && IsActive) {
 
                 // void GIVE_WEAPON_TO_PED(int pedHandle, Hash weaponAssetHash, int ammoCount, BOOL equipNow, BOOL isAmmoLoaded)
 

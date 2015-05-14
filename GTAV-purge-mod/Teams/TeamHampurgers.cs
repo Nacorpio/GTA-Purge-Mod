@@ -22,23 +22,76 @@ namespace GTAV_purge_mod.Teams {
 
             new[] {
 
-                new TeamMember(PedHash.OldMan1a) {
+                new TeamMember(PedHash.Blackops01SMY) {
+                    
+                    Position = TeamMember.TeamMemberPosition.Gunman,
+                    Armor = 100,
 
-                    Health = 100,
-                    Position = TeamMember.TeamMemberPosition.Engineer,
-
-                    Weapons = new[] {
+                    Weapons = new [] {
+                        WeaponHash.CarbineRifle,
                         WeaponHash.CombatPistol,
-                        WeaponHash.AssaultRifle
                     },
 
-                    PreferredWeapon = WeaponHash.CombatPistol
+                    PreferredSeat = VehicleSeat.LeftRear,
+                    PreferredWeapon = WeaponHash.CarbineRifle
 
                 },
 
-                new TeamMember(PedHash.OldMan2) {
+                new TeamMember(PedHash.Armymech01SMY) {
 
-                    Position = TeamMember.TeamMemberPosition.Gunman
+                    Position = TeamMember.TeamMemberPosition.Engineer,
+                    Health = 100,
+
+                    Weapons = new[] {
+                        WeaponHash.AssaultShotgun,
+                        WeaponHash.HeavyPistol
+                    },
+
+                    PreferredSeat = VehicleSeat.Driver,
+                    PreferredWeapon = WeaponHash.AssaultRifle
+
+                },
+
+                new TeamMember(PedHash.Blackops02SMY) {
+
+                    Position = TeamMember.TeamMemberPosition.Gunman,
+                    Armor = 100,
+
+                    Weapons = new [] {
+                        WeaponHash.CarbineRifle,
+                        WeaponHash.RPG
+                    },
+
+                    PreferredSeat = VehicleSeat.RightRear,
+                    PreferredWeapon = WeaponHash.CarbineRifle
+
+                },
+
+                new TeamMember(PedHash.Scientist01SMM) {
+
+                    Position = TeamMember.TeamMemberPosition.Medic,
+                    Armor = 25,
+
+                    Weapons = new [] {
+                        WeaponHash.SNSPistol,
+                    },
+
+                    PreferredWeapon = WeaponHash.SNSPistol
+
+                },
+
+                new TeamMember(PedHash.TaoCheng) {
+
+                    Position = TeamMember.TeamMemberPosition.Ninja,
+                    Armor = 25,
+
+                    Weapons = new [] {
+                        WeaponHash.Dagger,
+                        WeaponHash.MicroSMG
+                    },
+
+                    PreferredSeat = VehicleSeat.Any,
+                    PreferredWeapon = WeaponHash.Dagger
 
                 },
 
@@ -47,14 +100,14 @@ namespace GTAV_purge_mod.Teams {
                     Money = 0,
                     Health = 1000,
                     Position = TeamMember.TeamMemberPosition.Tank,
-                    PreferredSeat = VehicleSeat.Driver,
 
                     Weapons = new[] {
-                        WeaponHash.GrenadeLauncher,
-                        WeaponHash.SawnOffShotgun
+                        WeaponHash.HeavyShotgun,
+                        WeaponHash.GrenadeLauncher
                     },
 
-                    PreferredWeapon = WeaponHash.SawnOffShotgun
+                    PreferredSeat = VehicleSeat.Passenger,
+                    PreferredWeapon = WeaponHash.HeavyShotgun
 
                 }
 

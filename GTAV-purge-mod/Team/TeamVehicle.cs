@@ -129,11 +129,15 @@ namespace GTAV_purge_mod.Team {
         public TeamVehicle AddMember(TeamMember member, VehicleSeat seat) {
 
             if (OwnerTeam != null && Vehicle != null) {
-                if (Vehicle.GetPedOnSeat(seat) == null) {
-             
-                    member.Ped.Task.WarpIntoVehicle(Vehicle, seat);
 
+                if (Vehicle.GetPedOnSeat(seat) == null) {
+                    member.Ped.Task.WarpIntoVehicle(Vehicle, seat);
+                } else {
+                    Main.DebugText.Caption = "That seat is already taken!";
                 }
+
+            } else {
+                Main.DebugText.Caption = "There's no vehicle, yet!";
             }
 
             return this;
@@ -151,13 +155,16 @@ namespace GTAV_purge_mod.Team {
                 var member = OwnerTeam.MembersOfPosition(position, true);
                 TeamMember result = null;
 
+                if (Vehicle.GetPedOnSeat(seat) != null) {
+                    Main.DebugText.Caption = "There's already a ped on (" + seat.ToString() + ").";
+                    return this;
+                }
+
                 foreach (TeamMember e in member) {
 
-                    if (!e.Ped.IsInVehicle(Vehicle)) {
-
+                    if (!e.Ped.IsInVehicle(Vehicle) && e.Position == position) {
                         result = e;
-
-                    }
+                    } 
 
                 }
 

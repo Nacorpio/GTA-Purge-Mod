@@ -46,6 +46,7 @@ namespace GTAV_purge_mod {
         }
 
         private void OpenTeamsMenu() {
+
             var buttons = new MenuItem[_teams.Count];
 
             for (var i = 0; i < _teams.Count; i++) {
@@ -63,9 +64,11 @@ namespace GTAV_purge_mod {
             };
 
             View.AddMenu(menu);
+
         }
 
         private void OpenTeamMenu(Team.Team t) {
+
             var menu = new Menu(t.Name, new MenuItem[] {
                 new MenuButton("Members (" + t.Members.Length + ")", OpenTeamMembers),
                 new MenuButton("Vehicles (" + t.Vehicles.Length + ")", OpenTeamVehicles),
@@ -73,6 +76,7 @@ namespace GTAV_purge_mod {
             });
 
             View.AddMenu(menu);
+
         }
 
         private void OpenTeamMembers() {}
@@ -92,12 +96,15 @@ namespace GTAV_purge_mod {
 
             if (Ticks == 1) {
 
-                TeamVehicle vehicle = _teamHampurgers.SpawnVehicle(0, pos, true);
+                TeamVehicle vehicle = _teamHampurgers.SpawnVehicleWithMembers(0, new[] {
 
-                TeamMember tankMember = _teamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Tank, pos, true);
-                TeamMember gunMember1 = _teamHampurgers.SpawnMember(TeamMember.TeamMemberPosition.Gunman, pos, true);
+                    TeamMember.TeamMemberPosition.Engineer,
+                    TeamMember.TeamMemberPosition.Gunman,
+                    TeamMember.TeamMemberPosition.Gunman,
+                    TeamMember.TeamMemberPosition.Tank
 
-                vehicle.AddMember(tankMember).AddMember(gunMember1);
+                }, pos, true);
+
 
             }
 
