@@ -43,7 +43,7 @@ namespace GTAV_purge_mod.Position {
             _spawnAction.Invoke();
         }
 
-        public abstract void OnOpenMenu(Viewport view);
+        public abstract void OpenMenu(Viewport view);
 
         public void Use(int index, object[] args) {
             _actions[index].Invoke(args);

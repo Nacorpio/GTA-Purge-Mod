@@ -10,6 +10,8 @@ namespace GTAV_purge_mod.Position {
 
     public class PositionMedic : MemberPosition {
 
+        private int _healPoints = 0;
+
         private Menu _medicMenu;
         private Menu _medicHealMembersMenu;
 
@@ -17,11 +19,13 @@ namespace GTAV_purge_mod.Position {
             : base(member, Spawn, Heal) {
         }
 
-        private static void Spawn() {
-
+        private void Spawn() {
+            if (Member.IsActive) {
+                _healPoints = 5;
+            }
         }
 
-        private static void Heal(object[] pars) {
+        private void Heal(object[] pars) {
 
             // Check if the first parameter is a target to heal.
             if (pars[0] is TeamMember) {
@@ -32,7 +36,12 @@ namespace GTAV_purge_mod.Position {
                 // The member must be alive and active.
                 if (member.IsActive) {
 
-                    member.Health += 25;
+                    if (_healPoints - 1 >= 0) {
+                        member.Health = member.MaxHealth - 25;
+                        _healPoints--;
+                    } else {
+                        // Not enough heal points!
+                    }
 
                 }
 
@@ -49,8 +58,10 @@ namespace GTAV_purge_mod.Position {
 
                 if (e.IsActive) {
                     if (e.Ped.Health < e.Ped.MaxHealth) {
+
                         string caption = e.Position.ToString() + " (" + e.Ped.Health + "/" + e.Ped.MaxHealth + "hp)";
                         buttons[i] = new MenuButton(caption, () => Heal(new object[] {e}));
+
                     }
                 }
 
@@ -61,7 +72,7 @@ namespace GTAV_purge_mod.Position {
 
         }
 
-        public override void OnOpenMenu(Viewport view) {
+        public override void OpenMenu(Viewport view) {
             
             _medicMenu = new Menu("Medic", new MenuItem[] {
                 new MenuButton("Heal Member", ShowMedicHealMemberMenu), 
