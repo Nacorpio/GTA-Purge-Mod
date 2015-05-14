@@ -138,10 +138,12 @@ namespace GTAV_purge_mod.Team {
 
         private void ApplyChanges() {
             if (Ped != null) {
+
                 // void GIVE_WEAPON_TO_PED(int pedHandle, Hash weaponAssetHash, int ammoCount, BOOL equipNow, BOOL isAmmoLoaded)
+
                 for (var i = 0; i < Weapons.Length; i++) {
                     var e = Weapons[i];
-                    Function.Call(Hash.GIVE_WEAPON_TO_PED, Ped, (int) e, 666, true, true);
+                    Ped.Weapons.Give(e, 100, true, true);
                 }
 
                 Ped.Accuracy = Accuracy;
@@ -149,6 +151,7 @@ namespace GTAV_purge_mod.Team {
                 Ped.Money = Money;
                 Ped.Heading = Heading;
                 Ped.Health = Health;
+
             }
         }
 
