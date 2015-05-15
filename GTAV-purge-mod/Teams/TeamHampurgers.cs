@@ -67,7 +67,7 @@ namespace GTAV_purge_mod.Teams {
 
                 },
 
-                new TeamMember(PedHash.Scientist01SMM) {
+                new TeamMember(Main.Player.Character, true) {
 
                     Position = TeamMember.TeamMemberPosition.Medic,
                     Armor = 25,

@@ -38,8 +38,6 @@ namespace GTAV_purge_mod {
             Tick += OnTick;
             KeyDown += OnKeyDown;
 
-            Interval = 500;
-
         }
 
         private void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {
@@ -47,6 +45,7 @@ namespace GTAV_purge_mod {
         }
 
         private int Ticks { get; set; }
+
         private void OnTick(object sender, EventArgs e) {
 
             var playerPed = Player.Character;

@@ -1,6 +1,7 @@
 ﻿using GTA;
 using GTA.Math;
 using GTA.Native;
+using GTAV_purge_mod.Position;
 
 namespace GTAV_purge_mod.Team {
 
@@ -25,10 +26,13 @@ namespace GTAV_purge_mod.Team {
 
         private readonly PedHash _modelHash;
         private TeamMemberPosition _position = TeamMemberPosition.Gunman;
+        private MemberPosition _memberPosition;
 
         private WeaponHash[] _weapons;
         private VehicleSeat _preferredSeat = VehicleSeat.Any;
         private WeaponHash _preferredWeapon;
+        private Blip _blip;
+
         private Team _team;
 
         private TeamMemberRank _rank = TeamMemberRank.StreetRat;
@@ -57,6 +61,11 @@ namespace GTAV_purge_mod.Team {
 
         }
 
+        public MemberPosition MemberPosition {
+            get { return _memberPosition; }
+            private set { _memberPosition = value; }
+        }
+
         public WeaponHash PreferredWeapon {
             private get { return _preferredWeapon; }
             set { _preferredWeapon = value; }
@@ -80,6 +89,10 @@ namespace GTAV_purge_mod.Team {
         public TeamMemberRank Rank {
             get { return _rank; }
             set { _rank = value; }
+        }
+
+        public Blip Blip {
+            get { return _blip; }
         }
 
         public Team Team {
@@ -140,18 +153,31 @@ namespace GTAV_purge_mod.Team {
             get { return _modelHash; }
         }
 
-        public void Update(int tick) {
+        public void OnActiveUpdate(int tick) {
 
-            if (Ped != null && Ped.IsAlive) {
-
-                IsActive = true;
-
-            } else {
-
-                IsActive = false;
-
+            if (_blip == null) {
+                _blip = Ped.AddBlip();
+                _blip.Color = BlipColor.Green;
             }
 
+        }
+
+        public void OnInactiveUpdate(int tick) {
+
+            if (_blip != null) {
+                _blip.Remove();
+            }
+
+        }
+
+        public void Update(int tick) {
+            if (Ped != null && Ped.IsAlive) {
+                IsActive = true;
+                OnActiveUpdate(tick);
+            } else {
+                IsActive = false;
+                OnInactiveUpdate(tick);
+            }
         }
 
         private void ApplyChanges() {
@@ -164,6 +190,14 @@ namespace GTAV_purge_mod.Team {
 
                 if (Ped.Weapons[PreferredWeapon] != null) {
                     Ped.Weapons.Select(Ped.Weapons[PreferredWeapon]);
+                }
+
+                if (_memberPosition == null) {
+                    switch (Position) {
+                        case TeamMemberPosition.Medic:
+                            _memberPosition = new PositionMedic(this);
+                            break;
+                    }
                 }
 
                 Ped.Accuracy = _accuracy;

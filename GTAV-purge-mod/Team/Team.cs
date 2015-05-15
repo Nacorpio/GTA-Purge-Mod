@@ -150,8 +150,10 @@ namespace GTAV_purge_mod.Team {
             if (IsTeamMember(ped)) {
                 for (var i = 0; i < Members.Length; i++) {
                     var e = Members[i];
-                    if (e.Ped.Handle == ped.Handle) {
-                        return e;
+                    if (e.Ped != null) {
+                        if (e.Ped.Handle == ped.Handle) {
+                            return e;
+                        }
                     }
                 }
             }
@@ -161,8 +163,10 @@ namespace GTAV_purge_mod.Team {
         public bool IsTeamMember(Ped ped) {
             for (var i = 0; i < Members.Length; i++) {
                 var e = Members[i];
-                if (e.Ped.Handle == ped.Handle) {
-                    return true;
+                if (e.Ped != null) {
+                    if (e.Ped.Handle == ped.Handle) {
+                        return true;
+                    }
                 }
             }
             return false;
