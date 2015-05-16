@@ -98,7 +98,10 @@ namespace GTAV_purge_mod.Teams {
                 new TeamMember(PedHash.Bouncer01SMM) {
 
                     Money = 0,
+
+                    MaxHealth = 1000,
                     Health = 1000,
+
                     Position = TeamMember.TeamMemberPosition.Tank,
 
                     Weapons = new[] {

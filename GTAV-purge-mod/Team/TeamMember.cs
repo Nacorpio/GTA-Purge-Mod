@@ -40,8 +40,8 @@ namespace GTAV_purge_mod.Team {
         private int _accuracy;
         private int _armor;
         private int _money;
-        private int _health;
-        private int _maxHealth;
+        private int _health = 100;
+        private int _maxHealth = 100;
 
         private float _heading;
 
@@ -59,28 +59,76 @@ namespace GTAV_purge_mod.Team {
             _modelHash = modelHash;
         }
 
+        private int _activeTicks = 0;
+        private int _inactiveTicks = 0;
+
         public void Update(int tick) {
+
+            // Update with the current tick and whether it's active.
+            OnUpdate(tick, IsActive);
+
             if (Ped != null && Ped.IsAlive) {
+
                 IsActive = true;
-                OnActiveUpdate(tick);
+                _inactiveTicks = 0;
+
+                // Update the member with a new active update.
+                OnActiveUpdate(_activeTicks, tick);
+
+                // Update the active lifespan.
+                _activeTicks++;
+
             } else {
+
                 IsActive = false;
-                OnInactiveUpdate(tick);
+                _activeTicks = 0;
+
+                // Update the member with a new inactive update.
+                OnInactiveUpdate(_inactiveTicks, tick);
+
+                // Update the inactive lifespan.
+                _inactiveTicks++;
+
             }
+
         }
 
-        public void OnActiveUpdate(int tick) {
+        private static void OnUpdate(int gameTick, bool alive) {
+            
+        }
+            
+        private void OnActiveUpdate(int activeTick, int gameTick) {
+
+            // First tick of the active update.
+            if (activeTick == 0)
+                Function.Call(Hash.SET_PED_DIES_WHEN_INJURED, Ped, false);
+
             if (_blip == null && !Ped.IsPlayer) {
                 _blip = Ped.AddBlip();
                 _blip.Color = BlipColor.Green;
             }
+
         }
 
-        public void OnInactiveUpdate(int tick) {
+        private void OnInactiveUpdate(int inactiveTick, int gameTick) {
+
             if (_blip != null) {
                 _blip.Remove();
             }
+
         }
+
+        /// <summary>
+        /// Returns for how many ticks this member has been active this active session.
+        /// 0 represents the first tick of the active session.
+        /// </summary>
+        public int ActiveTicks { get { return _activeTicks; } }
+
+        /// <summary>
+        /// Returns for how many ticks this member has been inactive inactive session.
+        /// 0 represents the first tick of the inactive session.
+        /// </summary>
+        public int InactiveTicks { get { return _inactiveTicks; }}
 
         #region "Properties"
 
@@ -156,6 +204,10 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Accuracy : _accuracy);
             }
             set {
+                if (IsActive) {
+                    Ped.Accuracy = value;
+                    return;
+                }
                 _accuracy = value;
             }
         }
@@ -165,6 +217,10 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Health : _armor);
             }
             set {
+                if (IsActive) {
+                    Ped.Armor = value;
+                    return;
+                }
                 _armor = value;
             }
         }
@@ -174,6 +230,10 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Money : _money);
             }
             set {
+                if (IsActive) {
+                    Ped.Money = value;
+                    return;
+                }
                 _money = value;
             }
         }
@@ -192,6 +252,10 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Health : _health);
             }
             set {
+                if (IsActive) {
+                    Ped.Health = value;
+                    return;
+                }
                 _health = value;
             }
         }
@@ -201,6 +265,10 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.MaxHealth : _maxHealth);
             }
             set {
+                if (IsActive) {
+                    Ped.MaxHealth = value;
+                    return;
+                }
                 _maxHealth = value;
             }
         }

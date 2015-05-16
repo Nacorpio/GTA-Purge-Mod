@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GTA;
+using GTA.Native;
 using GTAV_purge_mod.Team;
 using Menu = GTA.Menu;
 using MenuItem = GTA.MenuItem;
@@ -15,50 +16,21 @@ namespace GTAV_purge_mod.Ability {
     public class AbilityMedic : IAbility {
 
         private Menu _abilityMenu;
-        private int _abilityPoints = 10;
 
         public bool Perform(params object[] args) {
 
-            if (args.Length == 2) {
+            if (args.Length == 1) {
 
                 var target = (TeamMember) args[0];
-                var increment = (int) args[1];
 
-                if (target != null && increment != 0) {
-                    if (AbilityPoints - increment >= 0) {
+                if (target != null) {
 
-                        if (target.Health < target.MaxHealth) {
+                    target.Health = target.MaxHealth;
 
-                            if (target.Health + increment <= target.MaxHealth) {
+                    if (target.Ped.IsInjured)
+                        Function.Call(Hash.REVIVE_INJURED_PED, target.Ped);
 
-                                target.Health += increment;
-                                DecrementAbilityPoints(increment);
-                                return true;
-
-                            } else {
-
-                                // The target can't have its health incremented by the specified amount.
-                                return false;
-
-                            }
-
-                        } else {
-
-                            // The target doesn't need healing.  
-                            return false;
-
-                        }
-
-                    } else {
-
-                        // There's not enough ability points to spend.
-                        return false;
-
-                    }
-                } else {
-
-                    // There's no valid target.  
-                    return false;
+                    return true;
 
                 }
 
@@ -68,41 +40,36 @@ namespace GTAV_purge_mod.Ability {
 
         }
 
-        public void ShowMenu(TeamMember member) {
-            
-            MenuItem[] buttons = new MenuItem[member.Team.Members.Length];
-            TeamMember[] members = member.Team.Members;
+        public int AbilityPoints { get; private set; }
 
+        public void ShowMenu(TeamMember member) {
+
+            TeamMember[] members = member.Team.Members;
+            MenuItem[] buttons = new MenuItem[members.Length];
+            
             for (var i = 0; i < members.Length; i++) {
 
                 var e = members[i];
                 MenuButton btn = null;
 
-                int health = e.Health;
-                int max = e.MaxHealth;
+                if (!e.IsActive) {
 
-                if (health <= max / 2) {
+                    btn = new MenuButton(e.Position.ToString() + " (Inactive)", () => {});
+                    buttons[i] = btn;
 
-                    // The target has less than half its life left.
-                    btn = new MenuButton(e.Position.ToString() + "(Medium health)", () => Perform(e));
-
-                } else if (health <= max / 4) {
-
-                    // The target has less than 1/4 of its life left.
-                    btn = new MenuButton(e.Position.ToString() + "(Low health)", () => Perform(e));
-
-                } else {
-
-                    // The target's health is too great to heal it.
-                    btn = new MenuButton(e.Position.ToString(), () => { });
+                    continue;
 
                 }
 
+                var health = e.Health;
+                var max = e.MaxHealth;
+
+                btn = new MenuButton(e.Position.ToString() + " (" + health + "/"+ max + "hp)", () => Perform(e));
                 buttons[i] = btn;
 
             }
 
-            _abilityMenu = new Menu("Ability Menu", buttons);
+            _abilityMenu = new Menu("Use Ability (Heal member)", buttons);
 
             Menus.ThemeMenu(_abilityMenu, false);
             Main.MainViewport.AddMenu(_abilityMenu);
@@ -113,25 +80,8 @@ namespace GTAV_purge_mod.Ability {
             get { return TeamMember.TeamMemberPosition.Medic; }
         }
 
-        private AbilityMedic IncrementAbilityPoints(int value) {
-            if (AbilityPoints + value <= MaxAbilityPoints)
-                AbilityPoints += value;
-            return this;
-        }
-
-        private AbilityMedic DecrementAbilityPoints(int value) {
-            if (AbilityPoints - value >= 0)
-                AbilityPoints -= value;
-            return this;
-        }
-
         public int MaxAbilityPoints {
             get { return 100;  }
-        }
-
-        public int AbilityPoints {
-            get { return _abilityPoints; }
-            private set { _abilityPoints = value; }
         }
 
     }

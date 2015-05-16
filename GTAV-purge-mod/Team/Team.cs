@@ -296,6 +296,26 @@ namespace GTAV_purge_mod.Team {
         }
 
         /// <summary>
+        /// Returns all the active members of this team.
+        /// </summary>
+        /// <returns></returns>
+        public TeamMember[] ActiveMembers() {
+            
+            TeamMember[] result = new TeamMember[] {};
+
+            for (var i = 0; i < Members.Length; i++) {
+
+                var e = Members[i];
+                if (e.IsActive)
+                    result[i] = e;
+
+            }
+
+            return result;
+
+        }
+
+        /// <summary>
         ///     Returns how many members that are inactive of the specified position.
         /// </summary>
         /// <param name="position">The position to check.</param>
