@@ -13,10 +13,11 @@ namespace GTAV_purge_mod {
     public class Main : Script {
 
         private static TeamHampurgers _teamHampurgers;
-
+        
         public static Team.Team TeamNoPurgeIntended;
         public static Team.Team TeamPurgeCops;
 
+        public static UIText DebugText;
         public static Viewport MainViewport;
 
         public static Player Player;
@@ -43,6 +44,8 @@ namespace GTAV_purge_mod {
             if (Ticks == 0) {
 
                 MainViewport = View;
+                DebugText = new UIText("DEBUG!", new Point(100, 100), 1f);
+
                 Player = Game.Player;
 
                 _teamHampurgers = new TeamHampurgers();
@@ -54,6 +57,7 @@ namespace GTAV_purge_mod {
                 team.OnTick();
             }
 
+            DebugText.Draw();
             Ticks++;
 
         }

@@ -42,13 +42,19 @@ namespace GTAV_purge_mod.Team {
 
         }
 
-        protected override void OnFirstActiveUpdate(int tick) {
-        }
+        protected override void OnFirstActiveUpdate(int tick) {}
 
-        protected override void OnFirstInactiveUpdate(int tick) {
-        }
+        protected override void OnFirstInactiveUpdate(int tick) {}
 
         protected override void OnFirstUpdate() {
+
+            foreach (var t in Main.Teams) {
+
+                if (t.Name != Name)
+                    World.SetRelationshipBetweenGroups(Relationship.Hate, Group, t.Group);
+
+            }
+
         }
 
         protected override void OnActiveUpdate(int activeTick, int tick) {

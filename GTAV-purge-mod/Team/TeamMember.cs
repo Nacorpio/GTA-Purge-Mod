@@ -1,4 +1,5 @@
-﻿using GTA;
+﻿using System.Diagnostics;
+using GTA;
 using GTA.Math;
 using GTA.Native;
 using GTAV_purge_mod.Ability;
@@ -63,30 +64,30 @@ namespace GTAV_purge_mod.Team {
             IsActive = Ped != null && Ped.IsAlive;
         }
 
-        protected override void OnFirstUpdate() {
-            
-        }
+        protected override void OnFirstUpdate() {}
 
-        protected override void OnActiveUpdate(int activeTick, int tick) {
-           
-        }
+        protected override void OnActiveUpdate(int activeTick, int tick) {}
 
         protected override void OnInactiveUpdate(int inactiveTick, int tick) {
+
             if (_blip != null) {
                 _blip.Remove();
             }
+
         }
 
         protected override void OnFirstActiveUpdate(int tick) {
+
+            Ped.RelationshipGroup = Team.Group;
+
             if (_blip == null && !Ped.IsPlayer) {
                 _blip = Ped.AddBlip();
                 _blip.Color = BlipColor.Green;
             }
+
         }
 
-        protected override void OnFirstInactiveUpdate(int tick) {
-            
-        }
+        protected override void OnFirstInactiveUpdate(int tick) {}
 
         #region "Properties"
 

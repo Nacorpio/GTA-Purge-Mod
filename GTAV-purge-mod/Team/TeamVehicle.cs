@@ -17,6 +17,7 @@ namespace GTAV_purge_mod.Team {
         private VehicleColor _secondaryColor = VehicleColor.MetallicWhite;
         private VehicleWindowTint _windowTint = VehicleWindowTint.Stock;
 
+        private Blip _blip;
         private Team _team;
 
         public TeamVehicle(VehicleHash modelHash) {
@@ -27,25 +28,24 @@ namespace GTAV_purge_mod.Team {
             IsActive = Vehicle != null && !Vehicle.IsDead;
         }
 
-        protected override void OnFirstUpdate() {
-            
-        }
+        protected override void OnFirstUpdate() {}
 
-        protected override void OnActiveUpdate(int activeTick, int tick) {
-            
-        }
+        protected override void OnActiveUpdate(int activeTick, int tick) {}
 
         protected override void OnInactiveUpdate(int activeTick, int tick) {
-            
+            if (_blip != null) {
+                _blip.Remove();
+            }
         }
 
         protected override void OnFirstActiveUpdate(int tick) {
-            
+            if (_blip == null) {
+                _blip = Vehicle.AddBlip();
+                _blip.Color = BlipColor.Blue;
+            }
         }
 
-        protected override void OnFirstInactiveUpdate(int tick) {
-            
-        }
+        protected override void OnFirstInactiveUpdate(int tick) {}
 
         #region "Properties"
 
