@@ -51,7 +51,7 @@ namespace GTAV_purge_mod {
             }
 
             foreach (var team in Teams) {
-                team.DoTick(Ticks);
+                team.OnTick();
             }
 
             Ticks++;

@@ -5,7 +5,7 @@ using GTAV_purge_mod.Ability;
 
 namespace GTAV_purge_mod.Team {
 
-    public class TeamMember {
+    public class TeamMember : Updater {
 
         public enum TeamMemberPosition {
             Gunman = 0,
@@ -59,76 +59,34 @@ namespace GTAV_purge_mod.Team {
             _modelHash = modelHash;
         }
 
-        private int _activeTicks = 0;
-        private int _inactiveTicks = 0;
+        protected override void OnUpdate(int tick) {
+            IsActive = Ped != null && Ped.IsAlive;
+        }
 
-        public void Update(int tick) {
+        protected override void OnFirstUpdate() {
+            
+        }
 
-            // Update with the current tick and whether it's active.
-            OnUpdate(tick, IsActive);
+        protected override void OnActiveUpdate(int activeTick, int tick) {
+           
+        }
 
-            if (Ped != null && Ped.IsAlive) {
-
-                IsActive = true;
-                _inactiveTicks = 0;
-
-                // Update the member with a new active update.
-                OnActiveUpdate(_activeTicks, tick);
-
-                // Update the active lifespan.
-                _activeTicks++;
-
-            } else {
-
-                IsActive = false;
-                _activeTicks = 0;
-
-                // Update the member with a new inactive update.
-                OnInactiveUpdate(_inactiveTicks, tick);
-
-                // Update the inactive lifespan.
-                _inactiveTicks++;
-
+        protected override void OnInactiveUpdate(int inactiveTick, int tick) {
+            if (_blip != null) {
+                _blip.Remove();
             }
-
         }
 
-        private static void OnUpdate(int gameTick, bool alive) {
-            
-        }
-            
-        private void OnActiveUpdate(int activeTick, int gameTick) {
-
-            // First tick of the active update.
-            if (activeTick == 0)
-                Function.Call(Hash.SET_PED_DIES_WHEN_INJURED, Ped, false);
-
+        protected override void OnFirstActiveUpdate(int tick) {
             if (_blip == null && !Ped.IsPlayer) {
                 _blip = Ped.AddBlip();
                 _blip.Color = BlipColor.Green;
             }
-
         }
 
-        private void OnInactiveUpdate(int inactiveTick, int gameTick) {
-
-            if (_blip != null) {
-                _blip.Remove();
-            }
-
+        protected override void OnFirstInactiveUpdate(int tick) {
+            
         }
-
-        /// <summary>
-        /// Returns for how many ticks this member has been active this active session.
-        /// 0 represents the first tick of the active session.
-        /// </summary>
-        public int ActiveTicks { get { return _activeTicks; } }
-
-        /// <summary>
-        /// Returns for how many ticks this member has been inactive inactive session.
-        /// 0 represents the first tick of the inactive session.
-        /// </summary>
-        public int InactiveTicks { get { return _inactiveTicks; }}
 
         #region "Properties"
 
@@ -219,9 +177,9 @@ namespace GTAV_purge_mod.Team {
             set {
                 if (IsActive) {
                     Ped.Armor = value;
-                    return;
+                } else {
+                    _armor = value;   
                 }
-                _armor = value;
             }
         }
 
@@ -232,9 +190,10 @@ namespace GTAV_purge_mod.Team {
             set {
                 if (IsActive) {
                     Ped.Money = value;
-                    return;
+                } else {
+                    _money = value;
                 }
-                _money = value;
+                
             }
         }
 
@@ -243,7 +202,11 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Heading : _heading);
             }
             set {
-                _heading = value;
+                if (IsActive) {
+                    Ped.Heading = value;
+                } else {
+                    _heading = value;
+                }
             }
         }
 
@@ -254,9 +217,9 @@ namespace GTAV_purge_mod.Team {
             set {
                 if (IsActive) {
                     Ped.Health = value;
-                    return;
+                } else {
+                    _health = value;
                 }
-                _health = value;
             }
         }
 
@@ -267,15 +230,10 @@ namespace GTAV_purge_mod.Team {
             set {
                 if (IsActive) {
                     Ped.MaxHealth = value;
-                    return;
+                } else {
+                    _maxHealth = value;
                 }
-                _maxHealth = value;
             }
-        }
-
-        public bool IsActive {
-            get;
-            private set;
         }
 
         public Ped Ped {

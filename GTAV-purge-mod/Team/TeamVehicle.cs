@@ -7,7 +7,7 @@ using GTA.Native;
 
 namespace GTAV_purge_mod.Team {
 
-    public class TeamVehicle {
+    public class TeamVehicle : Updater {
 
         private readonly List<TeamMember> _membersInVehicle = new List<TeamMember>();
         private readonly Dictionary<VehicleMod, int> _mods = new Dictionary<VehicleMod, int>();
@@ -23,21 +23,29 @@ namespace GTAV_purge_mod.Team {
             _vehicleHash = modelHash;
         }
 
-        public void Update(int tick) {
-
-            if (Vehicle != null && !Vehicle.IsDead) {
-                IsActive = true;
-                OnActiveUpdate(tick);
-            } else {
-                IsActive = false;
-                OnInactiveUpdate(tick);
-            }
-
+        protected override void OnUpdate(int tick) {
+            IsActive = Vehicle != null && !Vehicle.IsDead;
         }
 
-        private void OnActiveUpdate(int tick) {}
+        protected override void OnFirstUpdate() {
+            
+        }
 
-        private void OnInactiveUpdate(int tick) {}
+        protected override void OnActiveUpdate(int activeTick, int tick) {
+            
+        }
+
+        protected override void OnInactiveUpdate(int activeTick, int tick) {
+            
+        }
+
+        protected override void OnFirstActiveUpdate(int tick) {
+            
+        }
+
+        protected override void OnFirstInactiveUpdate(int tick) {
+            
+        }
 
         #region "Properties"
 
@@ -45,11 +53,6 @@ namespace GTAV_purge_mod.Team {
             get {
                 return _membersInVehicle;
             }
-        }
-
-        public bool IsActive {
-            get;
-            private set;
         }
 
         public Team Team {

@@ -49,6 +49,7 @@
     <Compile Include="Team\Team.cs" />
     <Compile Include="Team\TeamMember.cs" />
     <Compile Include="Team\TeamVehicle.cs" />
+    <Compile Include="Updater.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

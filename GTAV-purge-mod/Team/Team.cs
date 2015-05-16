@@ -4,7 +4,7 @@ using GTA.Math;
 
 namespace GTAV_purge_mod.Team {
 
-    public class Team {
+    public class Team : Updater {
 
         private readonly string _name;
 
@@ -30,22 +30,31 @@ namespace GTAV_purge_mod.Team {
 
         }
 
-        /// <summary>
-        /// Perform a tick on this team.
-        /// </summary>
-        /// <param name="tick">The current game tick.</param>
-        public void DoTick(int tick) {
+        protected override void OnUpdate(int tick) {
 
-            // Update all members with the new tick.
             foreach (var member in Members) {
-                member.Update(tick);
+                member.OnTick();
             }
 
-            // Update all vehicles with the new tick.
             foreach (var vehicle in Vehicles) {
-                vehicle.Update(tick);
+                vehicle.OnTick();
             }
 
+        }
+
+        protected override void OnFirstActiveUpdate(int tick) {
+        }
+
+        protected override void OnFirstInactiveUpdate(int tick) {
+        }
+
+        protected override void OnFirstUpdate() {
+        }
+
+        protected override void OnActiveUpdate(int activeTick, int tick) {
+        }
+
+        protected override void OnInactiveUpdate(int activeTick, int tick) {
         }
 
         #region "Properties"
@@ -140,6 +149,7 @@ namespace GTAV_purge_mod.Team {
         /// <param name="changes">Whether changes should be applied to this member.</param>
         /// <returns></returns>
         public TeamMember SpawnMember(int index, Vector3 vect, bool changes) {
+
             var member = Members[index];
 
             if (!member.IsActive) {
@@ -148,6 +158,7 @@ namespace GTAV_purge_mod.Team {
             }
 
             return member;
+
         }
 
         /// <summary>
