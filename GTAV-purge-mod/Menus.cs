@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using GTA;
+using GTAV_purge_mod.Ability;
 using GTAV_purge_mod.Team;
 using Menu = GTA.Menu;
 using MenuItem = GTA.MenuItem;
@@ -167,7 +168,7 @@ namespace GTAV_purge_mod {
 
         }
 
-        private static void ThemeMenu(Menu menu, bool footer) {
+        public static void ThemeMenu(Menu menu, bool footer) {
 
             if (footer) {
 
@@ -215,11 +216,39 @@ namespace GTAV_purge_mod {
 
         private static void ShowTeamMenu(Team.Team team) {
 
-            MenuItem[] buttons = new MenuItem[3];
+            MenuItem[] buttons = new MenuItem[4];
 
             buttons[0] = new MenuButton("Members (" + team.Members.Length + ")", () => ShowTeamMembers(team));
             buttons[1] = new MenuButton("Vehicles (" + team.Vehicles.Length + ")", () => ShowTeamVehicles(team));
             buttons[2] = new MenuButton("Statistics", () => ShowTeamStatistics(team));
+
+            if (team.IsTeamMember(Main.Player.Character)) {
+
+                var playerMember = team.ToTeamMember(Main.Player.Character);
+                if (playerMember == null) {
+
+                    // Member doesn't exist for some reason.
+                    return;
+
+                }
+
+                var ability = playerMember.Ability;
+                if (ability == null) {
+                    // The player has no ability.
+                    return;
+                }
+
+                // If we're at this point, we know the player has an ability.
+                // We can now use the ability.
+
+                buttons[3] = new MenuButton("Use Ability (" + ability.Position.ToString() + ")",
+                    () => ability.ShowMenu(playerMember));
+
+            } else {
+
+                buttons[3] = new MenuButton("There is no ability available for use!", () => { });
+
+            }
 
             _teamMenu = new Menu("Team (" + team.Name + ")", buttons);
 

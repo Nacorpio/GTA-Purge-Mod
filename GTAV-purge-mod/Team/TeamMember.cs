@@ -1,6 +1,7 @@
 ﻿using GTA;
 using GTA.Math;
 using GTA.Native;
+using GTAV_purge_mod.Ability;
 
 namespace GTAV_purge_mod.Team {
 
@@ -25,6 +26,7 @@ namespace GTAV_purge_mod.Team {
 
         private readonly PedHash _modelHash;
         private TeamMemberPosition _position = TeamMemberPosition.Gunman;
+        private IAbility _ability;
 
         private WeaponHash[] _weapons;
         private VehicleSeat _preferredSeat = VehicleSeat.Any;
@@ -59,6 +61,10 @@ namespace GTAV_purge_mod.Team {
 
         }
 
+        public IAbility Ability {
+            get { return _ability; }
+        }
+
         public WeaponHash PreferredWeapon {
             private get { return _preferredWeapon; }
             set { _preferredWeapon = value; }
@@ -76,7 +82,10 @@ namespace GTAV_purge_mod.Team {
 
         public TeamMemberPosition Position {
             get { return _position; }
-            set { _position = value; }
+            set {
+                _position = value;
+                UpdateForPosition(_position);
+            }
         }
 
         public TeamMemberRank Rank {
@@ -173,6 +182,14 @@ namespace GTAV_purge_mod.Team {
             }
         }
 
+        private void UpdateForPosition(TeamMemberPosition position) {
+            switch (position) {
+                case TeamMemberPosition.Medic:
+                    _ability = new AbilityMedic();
+                    break;
+            }
+        }
+
         private void ApplyChanges() {
 
             if (Ped != null && IsActive) {
@@ -196,6 +213,22 @@ namespace GTAV_purge_mod.Team {
                     Ped.Health = _health;
 
             }
+
+        }
+
+        public TeamMember[] NearbyMembers(float dist) {
+            
+            TeamMember[] result = new TeamMember[] {};
+            var location = Ped.Position;
+
+            foreach (var member in Team.Members) {
+
+                if (Ped.IsNearEntity(member.Ped, new Vector3(dist, dist, dist)))
+                    result[result.Length] = member;
+
+            }
+
+            return result;
 
         }
 

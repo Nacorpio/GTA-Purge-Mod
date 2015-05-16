@@ -40,6 +40,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ability\AbilityMedic.cs" />
+    <Compile Include="Ability\IAbility.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Menus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -48,9 +50,7 @@
     <Compile Include="Team\TeamMember.cs" />
     <Compile Include="Team\TeamVehicle.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Position\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

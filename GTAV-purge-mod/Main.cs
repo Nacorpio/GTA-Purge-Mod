@@ -18,7 +18,6 @@ namespace GTAV_purge_mod {
         public static Team.Team TeamPurgeCops;
 
         public static Viewport MainViewport;
-        public static UIText DebugText;
 
         public static Player Player;
         public static readonly List<Team.Team> Teams = new List<Team.Team>();
@@ -26,20 +25,13 @@ namespace GTAV_purge_mod {
         public Main() {
 
             Ticks = 0;
-            MainViewport = View;
-            Player = Game.Player;
-            
-            DebugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
-
-            _teamHampurgers = new TeamHampurgers();
-            Teams.Add(_teamHampurgers);
 
             Tick += OnTick;
             KeyDown += OnKeyDown;
 
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {
+        private static void OnKeyDown(object sender, KeyEventArgs keyEventArgs) {
             Menus.ProcessKey(keyEventArgs);
         }
 
@@ -47,11 +39,21 @@ namespace GTAV_purge_mod {
 
         private void OnTick(object sender, EventArgs e) {
 
+            // First tick.
+            if (Ticks == 0) {
+
+                MainViewport = View;
+                Player = Game.Player;
+
+                _teamHampurgers = new TeamHampurgers();
+                Teams.Add(_teamHampurgers);
+
+            }
+
             foreach (var team in Teams) {
                 team.DoTick(Ticks);
             }
 
-            DebugText.Draw();
             Ticks++;
 
         }
