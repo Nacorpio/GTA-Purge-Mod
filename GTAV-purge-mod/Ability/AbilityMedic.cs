@@ -17,7 +17,7 @@ namespace GTAV_purge_mod.Ability {
         private Menu _abilityMenu;
         private int _abilityPoints = 10;
 
-        public void Perform(params object[] args) {
+        public bool Perform(params object[] args) {
 
             if (args.Length == 2) {
 
@@ -33,23 +33,38 @@ namespace GTAV_purge_mod.Ability {
 
                                 target.Health += increment;
                                 DecrementAbilityPoints(increment);
+                                return true;
 
                             } else {
+
                                 // The target can't have its health incremented by the specified amount.
+                                return false;
+
                             }
 
                         } else {
+
                             // The target doesn't need healing.  
+                            return false;
+
                         }
 
                     } else {
+
                         // There's not enough ability points to spend.
+                        return false;
+
                     }
                 } else {
+
                     // There's no valid target.  
+                    return false;
+
                 }
 
             }
+
+            return false;
 
         }
 
@@ -63,11 +78,24 @@ namespace GTAV_purge_mod.Ability {
                 var e = members[i];
                 MenuButton btn = null;
 
-                if (e.Health <= e.MaxHealth/2) {
-                    btn = new MenuButton(e.Position.ToString() + "(Low Health)", () => Perform(e));
-                }
-                else {
+                int health = e.Health;
+                int max = e.MaxHealth;
+
+                if (health <= max / 2) {
+
+                    // The target has less than half its life left.
+                    btn = new MenuButton(e.Position.ToString() + "(Medium health)", () => Perform(e));
+
+                } else if (health <= max / 4) {
+
+                    // The target has less than 1/4 of its life left.
+                    btn = new MenuButton(e.Position.ToString() + "(Low health)", () => Perform(e));
+
+                } else {
+
+                    // The target's health is too great to heal it.
                     btn = new MenuButton(e.Position.ToString(), () => { });
+
                 }
 
                 buttons[i] = btn;

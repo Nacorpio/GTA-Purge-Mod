@@ -23,41 +23,95 @@ namespace GTAV_purge_mod.Team {
             _vehicleHash = modelHash;
         }
 
-        public List<TeamMember> MembersInVehicle {
-            get { return _membersInVehicle; }
+        public void Update(int tick) {
+
+            if (Vehicle != null && !Vehicle.IsDead) {
+                IsActive = true;
+                OnActiveUpdate(tick);
+            } else {
+                IsActive = false;
+                OnInactiveUpdate(tick);
+            }
+
         }
 
-        public bool IsActive { get; private set; }
+        private void OnActiveUpdate(int tick) {}
+
+        private void OnInactiveUpdate(int tick) {}
+
+        #region "Properties"
+
+        public List<TeamMember> MembersInVehicle {
+            get {
+                return _membersInVehicle;
+            }
+        }
+
+        public bool IsActive {
+            get;
+            private set;
+        }
 
         public Team Team {
-            get { return _team; }
-            set { _team = value; }
+            get {
+                return _team;
+            }
+            set {
+                _team = value;
+            }
         }
 
         public VehicleHash ModelHash {
-            get { return _vehicleHash; }
+            get {
+                return _vehicleHash;
+            }
         }
 
         public VehicleWindowTint WindowTint {
-            get { return _windowTint; }
-            set { _windowTint = value; }
+            get {
+                return _windowTint;
+            }
+            set {
+                _windowTint = value;
+            }
         }
 
         public VehicleColor PrimaryColor {
-            get { return _primaryColor; }
-            set { _primaryColor = value; }
+            get {
+                return _primaryColor;
+            }
+            set {
+                _primaryColor = value;
+            }
         }
 
         public VehicleColor SecondaryColor {
-            get { return _secondaryColor; }
-            set { _secondaryColor = value; }
+            get {
+                return _secondaryColor;
+            }
+            set {
+                _secondaryColor = value;
+            }
         }
 
         public Dictionary<VehicleMod, int> Mods {
-            get { return _mods; }
+            get {
+                return _mods;
+            }
         }
 
-        public Vehicle Vehicle { get; private set; }
+        public Vehicle Vehicle {
+            get;
+            private set;
+        }
+
+        public bool HasWeapons() {
+            return Function.Call<bool>(Hash.DOES_VEHICLE_HAVE_WEAPONS, Vehicle);
+        }
+
+        #endregion
+
+        #region "Methods"
 
         public TeamVehicle Create(Vector3 pos, bool mods) {
 
@@ -71,20 +125,6 @@ namespace GTAV_purge_mod.Team {
             }
 
             return this;
-
-        }
-
-        public void Update(int tick) {
-
-            if (Vehicle != null && !Vehicle.IsDead) {
-
-                IsActive = true;
-
-            } else {
-
-                IsActive = false;
-
-            }
 
         }
 
@@ -116,7 +156,7 @@ namespace GTAV_purge_mod.Team {
                 for (var i = 0; i < Vehicle.PassengerSeats; i++) {
 
                     // Gets the enum with the specified value.
-                    var e = Vehicle.GetPedOnSeat((VehicleSeat) Enum.Parse(typeof (VehicleSeat), i.ToString()));
+                    var e = Vehicle.GetPedOnSeat((VehicleSeat)Enum.Parse(typeof(VehicleSeat), i.ToString()));
 
                     // Checks if the ped is a team member.
                     if (Team.IsTeamMember(e)) {
@@ -138,11 +178,13 @@ namespace GTAV_purge_mod.Team {
                 if (Vehicle.GetPedOnSeat(seat) == null) {
                     member.Ped.Task.WarpIntoVehicle(Vehicle, seat);
                 } else {
-                    Main.DebugText.Caption = "That seat is already taken!";
+                    // Set has already been taken.
+                    return this;
                 }
 
             } else {
-                Main.DebugText.Caption = "There's no vehicle, yet!";
+                // There is no vehicle.
+                return this;
             }
 
             return this;
@@ -161,24 +203,25 @@ namespace GTAV_purge_mod.Team {
                 TeamMember result = null;
 
                 if (Vehicle.GetPedOnSeat(seat) != null) {
-                    Main.DebugText.Caption = "There's already a ped on (" + seat.ToString() + ").";
+                    // There's already a ped.
                     return this;
                 }
 
-                foreach (TeamMember e in member) {
+                foreach (var e in member) {
 
                     if (!e.Ped.IsInVehicle(Vehicle) && e.Position == position) {
                         result = e;
-                    } 
+                    }
 
                 }
 
-                if (result != null) {
-
-                    result.Ped.Task.WarpIntoVehicle(Vehicle, seat);
-                    UpdateMembers();
-
+                if (result == null) {
+                    // The result is null.
+                    return this;
                 }
+
+                result.Ped.Task.WarpIntoVehicle(Vehicle, seat);
+                UpdateMembers();
 
             }
 
@@ -213,11 +256,11 @@ namespace GTAV_purge_mod.Team {
 
         public TeamVehicle AddAllModsMax() {
 
-            var modStrings = Enum.GetNames(typeof (VehicleMod));
+            var modStrings = Enum.GetNames(typeof(VehicleMod));
 
             foreach (string s in modStrings) {
 
-                var mod = (VehicleMod) Enum.Parse(typeof (VehicleMod), s);
+                var mod = (VehicleMod)Enum.Parse(typeof(VehicleMod), s);
                 AddModMax(mod);
 
             }
@@ -228,7 +271,7 @@ namespace GTAV_purge_mod.Team {
 
         private TeamVehicle AddModMax(VehicleMod mod) {
 
-            var max = Function.Call<int>(Hash.GET_NUM_VEHICLE_MODS, Vehicle, (int) mod);
+            var max = Function.Call<int>(Hash.GET_NUM_VEHICLE_MODS, Vehicle, (int)mod);
 
             if (max != 0) {
 
@@ -240,8 +283,7 @@ namespace GTAV_purge_mod.Team {
 
         }
 
-        public bool HasWeapons() {
-            return Function.Call<bool>(Hash.DOES_VEHICLE_HAVE_WEAPONS, Vehicle);
-        }
+        #endregion
+
     }
 }

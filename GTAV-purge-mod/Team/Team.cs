@@ -99,16 +99,11 @@ namespace GTAV_purge_mod.Team {
 
             TeamVehicle vehicle = SpawnVehicle(index, vect, mods);
 
-            foreach (TeamMember.TeamMemberPosition pos in positions) {
+            foreach (var pos in positions) {
 
                 if (InactiveCountOf(pos) >= 1) {
                     TeamMember member = SpawnMember(pos, vect, true);
                     vehicle.AddMember(member);
-                }
-
-                else
-                {
-                    Main.DebugText.Caption = "No available inactive member (" + pos.ToString() + ").";
                 }
 
             }

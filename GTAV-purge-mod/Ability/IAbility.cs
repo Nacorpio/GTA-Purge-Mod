@@ -9,7 +9,7 @@ namespace GTAV_purge_mod.Ability {
 
     public interface IAbility {
 
-        void Perform(params object[] args);
+        bool Perform(params object[] args);
 
         void ShowMenu(TeamMember member);
 
