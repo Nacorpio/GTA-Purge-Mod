@@ -60,7 +60,7 @@ namespace GTAV_purge_mod.Team {
         protected override void OnActiveUpdate(int activeTick, int tick) {
         }
 
-        protected override void OnInactiveUpdate(int activeTick, int tick) {
+        protected override void OnInactiveUpdate(int inactiveTick, int tick) {
         }
 
         #region "Properties"

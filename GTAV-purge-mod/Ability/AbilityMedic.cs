@@ -51,10 +51,22 @@ namespace GTAV_purge_mod.Ability {
 
                 var e = members[i];
                 MenuButton btn = null;
+                var desc = "";
 
                 if (!e.IsActive) {
 
-                    btn = new MenuButton(e.Position.ToString() + " (Inactive)", () => {});
+                    desc = "This member is inactive, and can not be healed!";
+                    btn = new MenuButton(e.Position.ToString() + " (Inactive)", desc, () => {});
+                    buttons[i] = btn;
+
+                    continue;
+
+                }
+
+                if (e.Ped.IsPlayer) {
+
+                    desc = "You can not heal yourself!";
+                    btn = new MenuButton("You (" + e.Position.ToString() + ")", desc, () => {});
                     buttons[i] = btn;
 
                     continue;
@@ -64,14 +76,17 @@ namespace GTAV_purge_mod.Ability {
                 var health = e.Health;
                 var max = e.MaxHealth;
 
-                btn = new MenuButton(e.Position.ToString() + " (" + health + "/"+ max + "hp)", () => Perform(e));
+                desc = (health == max ? "This member has full health!" : 
+                String.Format("This member has {0} HP and needs {1} HP to have full health!", health, max - health));
+
+                btn = new MenuButton(e.Position.ToString() + " (" + health + " / " + max + " HP)", desc, () => Perform(e));
                 buttons[i] = btn;
 
             }
 
             _abilityMenu = new Menu("Use Ability (Heal member)", buttons);
 
-            Menus.ThemeMenu(_abilityMenu, false);
+            Menus.ThemeMenu(_abilityMenu, true);
             Main.MainViewport.AddMenu(_abilityMenu);
 
         }
