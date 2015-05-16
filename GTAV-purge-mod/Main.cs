@@ -26,10 +26,9 @@ namespace GTAV_purge_mod {
         public Main() {
 
             Ticks = 0;
-
-            Player = Game.Player;
-
             MainViewport = View;
+            Player = Game.Player;
+            
             DebugText = new UIText("DEBUG!", new Point(500, 500), 0.35f, Color.Black, 4, false);
 
             _teamHampurgers = new TeamHampurgers();
@@ -48,15 +47,8 @@ namespace GTAV_purge_mod {
 
         private void OnTick(object sender, EventArgs e) {
 
-            var playerPed = Player.Character;
-            var pos = playerPed.Position;
-
             foreach (var team in Teams) {
                 team.DoTick(Ticks);
-            }
-
-            if (Ticks == 1) {
-
             }
 
             DebugText.Draw();

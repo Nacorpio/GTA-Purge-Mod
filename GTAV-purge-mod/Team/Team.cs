@@ -150,10 +150,8 @@ namespace GTAV_purge_mod.Team {
             if (IsTeamMember(ped)) {
                 for (var i = 0; i < Members.Length; i++) {
                     var e = Members[i];
-                    if (e.Ped != null) {
-                        if (e.Ped.Handle == ped.Handle) {
-                            return e;
-                        }
+                    if (e.IsActive && e.Ped.Handle == ped.Handle) {
+                        return e;
                     }
                 }
             }

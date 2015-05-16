@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using GTA;
-using GTAV_purge_mod.Position;
 using GTAV_purge_mod.Team;
 using Menu = GTA.Menu;
 using MenuItem = GTA.MenuItem;
@@ -216,28 +215,15 @@ namespace GTAV_purge_mod {
 
         private static void ShowTeamMenu(Team.Team team) {
 
-            MenuItem[] buttons = new MenuItem[4];
+            MenuItem[] buttons = new MenuItem[3];
+
             buttons[0] = new MenuButton("Members (" + team.Members.Length + ")", () => ShowTeamMembers(team));
             buttons[1] = new MenuButton("Vehicles (" + team.Vehicles.Length + ")", () => ShowTeamVehicles(team));
             buttons[2] = new MenuButton("Statistics", () => ShowTeamStatistics(team));
 
-            if (team.IsTeamMember(Main.Player.Character)) {
-
-                TeamMember playerMember = team.ToTeamMember(Main.Player.Character);
-                MemberPosition memberPosition = playerMember.MemberPosition;
-
-                buttons[3] = new MenuButton("Use Ability (" + playerMember.Position.ToString() + ")",
-                    () => memberPosition.OpenMenu(Main.MainViewport));
-
-            } else {
-
-                buttons[3] = new MenuButton("No Ability is available", null);
-
-            }
-
             _teamMenu = new Menu("Team (" + team.Name + ")", buttons);
 
-            ThemeMenu(_teamMenu, true);
+            ThemeMenu(_teamMenu, false);
             Main.MainViewport.AddMenu(_teamMenu);
 
         }
@@ -252,7 +238,7 @@ namespace GTAV_purge_mod {
                 new MenuButton((member.IsActive ? "Teleport" : "Teleport (inactive)"), (active ? "Teleport the member to your location" : MethodInactive), () => MemberMenuFunctions.Teleport(Main.Player.Character, member)),
                 new MenuButton((member.IsActive ? "Kill" : "Kill (inactive)"), (active ? "Kill the member" : MethodInactive), () => MemberMenuFunctions.Kill(member)),
                 new MenuButton((member.IsActive ? "Warp Into Vehicle" : "Warp Into Vehicle (inactive)"), (active ? "Warp the member into a team vehicle" : MethodInactive), () => ShowVehiclesMenuAsMember(member)), 
-                new MenuButton((member.IsActive ? "Reset" : "Reset (inactive)"), (active ? "Reset the member" : MethodInactive), null)
+                new MenuButton((member.IsActive ? "Reset" : "Reset (inactive)"), (active ? "Reset the member" : MethodInactive), () => { })
 
             });
 
