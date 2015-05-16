@@ -15,15 +15,36 @@ namespace GTAV_purge_mod.Team {
             Vehicles = vehicles;
             Members = members;
 
-            foreach (TeamMember member in members) {
+            // Set the TeamMember.Team variable to this team.
+            foreach (var member in members) {
                 member.Team = this;
             }
 
-            foreach (TeamVehicle vehicle in vehicles) {
+            // Set the TeamVehicle.Team variable to this team.
+            foreach (var vehicle in vehicles) {
                 vehicle.Team = this;
             }
 
+            // Assign a new relationship group to the team.
             Group = World.AddRelationShipGroup("group." + name.ToLower());
+
+        }
+
+        /// <summary>
+        /// Perform a tick on this team.
+        /// </summary>
+        /// <param name="tick">The current game tick.</param>
+        public void DoTick(int tick) {
+
+            // Update all members with the new tick.
+            foreach (var member in Members) {
+                member.Update(tick);
+            }
+
+            // Update all vehicles with the new tick.
+            foreach (var vehicle in Vehicles) {
+                vehicle.Update(tick);
+            }
 
         }
 
@@ -53,16 +74,7 @@ namespace GTAV_purge_mod.Team {
 
         #endregion
 
-        #region "Functions"
-
-        public void DoTick(int tick) {
-            foreach (var member in Members) {
-                member.Update(tick);
-            }
-            foreach (var vehicle in Vehicles) {
-                vehicle.Update(tick);
-            }
-        }
+        #region "Methods"
 
         /// <summary>
         ///     Spawns a vehicle on the specified index at the specified coordinates.
@@ -95,6 +107,14 @@ namespace GTAV_purge_mod.Team {
             return SpawnVehicle(index, vect.X, vect.Y, vect.Z, mods);
         }
 
+        /// <summary>
+        /// Spawns a vehicle of the specified type with members of the specified positions.
+        /// </summary>
+        /// <param name="index">The index of the vehicle to spawn.</param>
+        /// <param name="positions">The positions to spawn within the vehicle.</param>
+        /// <param name="vect">A Vector3 of the position of where to spawn the vehicle.</param>
+        /// <param name="mods">Whether to install mods on the newly spawned vehicle.</param>
+        /// <returns></returns>
         public TeamVehicle SpawnVehicleWithMembers(int index, TeamMember.TeamMemberPosition[] positions, Vector3 vect, bool mods) {
 
             TeamVehicle vehicle = SpawnVehicle(index, vect, mods);
@@ -130,6 +150,12 @@ namespace GTAV_purge_mod.Team {
             return member;
         }
 
+        /// <summary>
+        /// Spawns all the members in the team at the specified coordinates.
+        /// </summary>
+        /// <param name="vect">The coordinates of where to spawn the members.</param>
+        /// <param name="changes">Whether to update the properties of the members.</param>
+        /// <returns></returns>
         public Team SpawnMembers(Vector3 vect, bool changes) {
             for (var i = 0; i < Members.Length; i++) {
                 SpawnMember(i, vect, changes);
@@ -141,6 +167,11 @@ namespace GTAV_purge_mod.Team {
 
         #region "Utilities"
 
+        /// <summary>
+        /// Converts the specified ped to a TeamMember if the ped is a member of this team.
+        /// </summary>
+        /// <param name="ped">The ped to convert to a TeamMember.</param>
+        /// <returns></returns>
         public TeamMember ToTeamMember(Ped ped) {
             if (IsTeamMember(ped)) {
                 for (var i = 0; i < Members.Length; i++) {
@@ -153,6 +184,11 @@ namespace GTAV_purge_mod.Team {
             return null;
         }
 
+        /// <summary>
+        /// Returns whether the specified ped is a member of this team.
+        /// </summary>
+        /// <param name="ped">The ped to check.</param>
+        /// <returns></returns>
         public bool IsTeamMember(Ped ped) {
             for (var i = 0; i < Members.Length; i++) {
                 var e = Members[i];
@@ -165,6 +201,12 @@ namespace GTAV_purge_mod.Team {
             return false;
         }
 
+        /// <summary>
+        /// Returns a list of TeamMembers of the specified TeamMemberPosition.
+        /// </summary>
+        /// <param name="position">The position to sort out.</param>
+        /// <param name="active">Whether the sorting is for active or inactive members.</param>
+        /// <returns></returns>
         public List<TeamMember> MembersOfPosition(TeamMember.TeamMemberPosition position, bool active) {
 
             var result = new List<TeamMember>();
@@ -199,24 +241,6 @@ namespace GTAV_purge_mod.Team {
             if (InactiveCountOf(position) >= 1) {
 
                 var member = SpawnMember(InactiveOf(position), vect, changes);
-
-                // MemberPosition memberPos = null;
-
-                // Add a new element to the list, depending on the specified position.
-                //switch (position) {
-
-                //    case TeamMember.TeamMemberPosition.Medic:
-
-                //        memberPos = new PositionMedic(member);
-                //        // positions.Add(memberPos);
-
-                //        break;
-
-                //}
-
-                //if (memberPos != null)
-                //    memberPos.OnSpawn();
-
                 return member;
 
             }
@@ -255,7 +279,6 @@ namespace GTAV_purge_mod.Team {
             }
             return result;
         }
-
 
         /// <summary>
         ///     Returns how many members that are active of the specified position.
@@ -297,5 +320,6 @@ namespace GTAV_purge_mod.Team {
         }
 
         #endregion
+
     }
 }
