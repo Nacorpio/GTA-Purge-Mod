@@ -272,7 +272,11 @@ namespace GTAV_purge_mod.Team {
 
         }
 
-        private TeamVehicle AddModMax(VehicleMod mod) {
+        public TeamVehicle AddModMax(VehicleMod mod) {
+
+            if (Vehicle == null) {
+                return this;
+            }
 
             var max = Function.Call<int>(Hash.GET_NUM_VEHICLE_MODS, Vehicle, (int)mod);
 

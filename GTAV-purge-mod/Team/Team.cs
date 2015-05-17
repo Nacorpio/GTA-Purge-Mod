@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GTA;
 using GTA.Math;
 
@@ -33,11 +34,22 @@ namespace GTAV_purge_mod.Team {
         protected override void OnUpdate(int tick) {
 
             foreach (var member in Members) {
-                member.OnTick();
+                if (member.IsActive)
+                    member.OnTick();
             }
 
             foreach (var vehicle in Vehicles) {
                 vehicle.OnTick();
+            }
+
+        }
+
+        public void OnMemberKilled(TeamMember member) {
+
+            UI.Notify(member.Position + " died.");
+
+            if (ActiveMembers().Length == 0) {
+                UI.Notify("All members in " + Name + " have been killed.");
             }
 
         }
@@ -87,6 +99,8 @@ namespace GTAV_purge_mod.Team {
         /// </summary>
         public int Group { get; private set; }
 
+        public BlipColor Color { get; set; }
+
         #endregion
 
         #region "Methods"
@@ -134,13 +148,11 @@ namespace GTAV_purge_mod.Team {
 
             TeamVehicle vehicle = SpawnVehicle(index, vect, mods);
 
-            foreach (var pos in positions) {
+            foreach (TeamMember.TeamMemberPosition pos in positions.Where(p => InactiveCountOf(p) >= 1)) {
 
-                if (InactiveCountOf(pos) >= 1) {
-                    TeamMember member = SpawnMember(pos, vect, true);
-                    vehicle.AddMember(member);
-                }
-
+                TeamMember member = SpawnMember(pos, vect, true);
+                vehicle.AddMember(member);
+            
             }
 
             return vehicle;
@@ -190,15 +202,7 @@ namespace GTAV_purge_mod.Team {
         /// <param name="ped">The ped to convert to a TeamMember.</param>
         /// <returns></returns>
         public TeamMember ToTeamMember(Ped ped) {
-            if (IsTeamMember(ped)) {
-                for (var i = 0; i < Members.Length; i++) {
-                    var e = Members[i];
-                    if (e.IsActive && e.Ped.Handle == ped.Handle) {
-                        return e;
-                    }
-                }
-            }
-            return null;
+            return Members.Where(m => m.Ped.Handle == ped.Handle).ToList()[0];
         }
 
         /// <summary>
@@ -207,15 +211,7 @@ namespace GTAV_purge_mod.Team {
         /// <param name="ped">The ped to check.</param>
         /// <returns></returns>
         public bool IsTeamMember(Ped ped) {
-            for (var i = 0; i < Members.Length; i++) {
-                var e = Members[i];
-                if (e.Ped != null) {
-                    if (e.Ped.Handle == ped.Handle) {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return Members.Any(m => m.Ped != null && m.Ped.Handle == ped.Handle);
         }
 
         /// <summary>
@@ -225,25 +221,7 @@ namespace GTAV_purge_mod.Team {
         /// <param name="active">Whether the sorting is for active or inactive members.</param>
         /// <returns></returns>
         public List<TeamMember> MembersOfPosition(TeamMember.TeamMemberPosition position, bool active) {
-
-            var result = new List<TeamMember>();
-
-            for (var i = 0; i < Members.Length; i++) {
-
-                var e = Members[i];
-
-                if (e.Position == position && e.IsActive == active) {
-
-                    
-
-                    result.Add(e);
-
-                }
-
-            }
-
-            return result;
-
+            return Members.Where(m => m.Position == position && m.IsActive == active).ToList();
         }
 
         /// <summary>
@@ -254,16 +232,11 @@ namespace GTAV_purge_mod.Team {
         /// <param name="changes">Whether changes should be applied to this member.</param>
         /// <returns></returns>
         public TeamMember SpawnMember(TeamMember.TeamMemberPosition position, Vector3 vect, bool changes) {
-
             if (InactiveCountOf(position) >= 1) {
-
                 var member = SpawnMember(InactiveOf(position), vect, changes);
                 return member;
-
             }
-
             return null;
-
         }
 
         /// <summary>
@@ -287,14 +260,7 @@ namespace GTAV_purge_mod.Team {
         /// <param name="position">The position to check.</param>
         /// <returns></returns>
         private int MemberCount(TeamMember.TeamMemberPosition position) {
-            var result = 0;
-            for (var i = 0; i < Members.Length; i++) {
-                var e = Members[i];
-                if (e.Position == position) {
-                    result++;
-                }
-            }
-            return result;
+            return Members.Where(m => m.Position == position).ToList().Count;
         }
 
         /// <summary>
@@ -303,13 +269,7 @@ namespace GTAV_purge_mod.Team {
         /// <param name="position">The position to check.</param>
         /// <returns></returns>
         private int ActiveOf(TeamMember.TeamMemberPosition position) {
-            var result = 0;
-            foreach (TeamMember e in Members) {
-                if (e.Position == position && e.IsActive) {
-                    result++;
-                }
-            }
-            return result;
+            return Members.Where(m => m.Position == position && m.IsActive).ToList().Count;
         }
 
         /// <summary>
@@ -317,19 +277,7 @@ namespace GTAV_purge_mod.Team {
         /// </summary>
         /// <returns></returns>
         public TeamMember[] ActiveMembers() {
-            
-            TeamMember[] result = new TeamMember[] {};
-
-            for (var i = 0; i < Members.Length; i++) {
-
-                var e = Members[i];
-                if (e.IsActive)
-                    result[i] = e;
-
-            }
-
-            return result;
-
+            return Members.Where(m => m.IsActive).ToArray();
         }
 
         /// <summary>
@@ -347,13 +295,7 @@ namespace GTAV_purge_mod.Team {
         /// <param name="position">The position to check.</param>
         /// <returns></returns>
         public bool IsPositionAlive(TeamMember.TeamMemberPosition position) {
-            for (var i = 0; i < Members.Length; i++) {
-                var e = Members[i];
-                if (e.Position == position && e.IsActive) {
-                    return true;
-                }
-            }
-            return false;
+            return Members.Where(m => m.Position == position).ToList().Count >= 1;
         }
 
         #endregion

@@ -9,7 +9,7 @@ namespace GTAV_purge_mod {
 
     public abstract class Updater {
 
-        private bool _active = false;
+        private bool _active = true;
 
         private int _activeTick;
         private int _inactiveTick;
@@ -28,9 +28,9 @@ namespace GTAV_purge_mod {
 
             OnUpdate(_tick);
 
-            if (_actionQueue.ContainsKey(_tick)) {
-                _actionQueue[_tick].Invoke();
-            }
+            //if (_actionQueue.ContainsKey(_tick)) {
+            //    _actionQueue[_tick].Invoke();
+            //}
 
             if (_tick == 0 || _tick == _startTick) {
                 
@@ -50,7 +50,9 @@ namespace GTAV_purge_mod {
 
                 _activeTick++;
 
-            } else {
+            } 
+            
+            if (!_active) {
 
                 _activeTick = 0;
 

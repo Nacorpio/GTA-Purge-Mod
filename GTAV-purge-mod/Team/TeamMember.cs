@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using GTA;
 using GTA.Math;
 using GTA.Native;
@@ -61,7 +62,17 @@ namespace GTAV_purge_mod.Team {
         }
 
         protected override void OnUpdate(int tick) {
-            IsActive = Ped != null && Ped.IsAlive;
+
+            if (Ped != null && Ped.IsAlive) {
+                IsActive = true;
+            } else {
+                IsActive = false;
+            }
+
+            if (Ped != null && Ped.IsPlayer) {
+
+            }
+            
         }
 
         protected override void OnFirstUpdate() {}
@@ -70,8 +81,17 @@ namespace GTAV_purge_mod.Team {
 
         protected override void OnInactiveUpdate(int inactiveTick, int tick) {
 
+            // HAS_ENTITY_BEEN_DAMAGED_BY_ENTITY
+
+            if (Ped != null && Ped.IsDead) {
+
+                Team.OnMemberKilled(this);
+
+            }
+
             if (_blip != null) {
                 _blip.Remove();
+                _blip = null;
             }
 
         }
@@ -82,7 +102,7 @@ namespace GTAV_purge_mod.Team {
 
             if (_blip == null && !Ped.IsPlayer) {
                 _blip = Ped.AddBlip();
-                _blip.Color = BlipColor.Green;
+                _blip.Color = Team.Color;
             }
 
         }
@@ -163,7 +183,7 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Accuracy : _accuracy);
             }
             set {
-                if (IsActive) {
+                if (Ped != null && IsActive) {
                     Ped.Accuracy = value;
                     return;
                 }
@@ -176,7 +196,7 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Health : _armor);
             }
             set {
-                if (IsActive) {
+                if (Ped != null && IsActive) {
                     Ped.Armor = value;
                 } else {
                     _armor = value;   
@@ -189,7 +209,7 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Money : _money);
             }
             set {
-                if (IsActive) {
+                if (Ped != null && IsActive) {
                     Ped.Money = value;
                 } else {
                     _money = value;
@@ -203,7 +223,7 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Heading : _heading);
             }
             set {
-                if (IsActive) {
+                if (Ped != null && IsActive) {
                     Ped.Heading = value;
                 } else {
                     _heading = value;
@@ -216,7 +236,7 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.Health : _health);
             }
             set {
-                if (IsActive) {
+                if (Ped != null && IsActive) {
                     Ped.Health = value;
                 } else {
                     _health = value;
@@ -229,7 +249,7 @@ namespace GTAV_purge_mod.Team {
                 return (IsActive ? Ped.MaxHealth : _maxHealth);
             }
             set {
-                if (IsActive) {
+                if (Ped != null && IsActive) {
                     Ped.MaxHealth = value;
                 } else {
                     _maxHealth = value;
@@ -262,7 +282,7 @@ namespace GTAV_purge_mod.Team {
 
         private void ApplyChanges() {
 
-            if (Ped != null && IsActive) {
+            if (Ped != null && IsActive && !Ped.IsPlayer) {
 
                 Ped.Weapons.RemoveAll();
 
@@ -287,19 +307,7 @@ namespace GTAV_purge_mod.Team {
         }
 
         public TeamMember[] NearbyMembers(float dist) {
-
-            TeamMember[] result = new TeamMember[] { };
-            var location = Ped.Position;
-
-            foreach (var member in Team.Members) {
-
-                if (Ped.IsNearEntity(member.Ped, new Vector3(dist, dist, dist)))
-                    result[result.Length] = member;
-
-            }
-
-            return result;
-
+            return Team.Members.Where(t => Ped.IsNearEntity(t.Ped, new Vector3(dist, dist, dist))).ToArray();
         }
 
         public TeamMember Create(Vector3 pos, bool changes) {

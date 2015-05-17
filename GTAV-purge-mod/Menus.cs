@@ -216,11 +216,19 @@ namespace GTAV_purge_mod {
 
         private static void ShowTeamMenu(Team.Team team) {
 
-            MenuItem[] buttons = new MenuItem[4];
+            MenuItem[] buttons = new MenuItem[6];
 
             buttons[0] = new MenuButton("Members (" + team.Members.Length + ")", () => ShowTeamMembers(team));
             buttons[1] = new MenuButton("Vehicles (" + team.Vehicles.Length + ")", () => ShowTeamVehicles(team));
             buttons[2] = new MenuButton("Statistics", () => ShowTeamStatistics(team));
+
+            buttons[3] = new MenuButton("Spawn Team", () => {
+                team.SpawnMembers(Main.Player.Character.Position, true);
+            });
+
+            buttons[4] = new MenuButton("Spawn Team near", () => {
+                team.SpawnMembers(Main.Player.Character.Position.Around(50f), true); 
+            });
 
             if (team.IsTeamMember(Main.Player.Character)) {
 
@@ -241,12 +249,12 @@ namespace GTAV_purge_mod {
                 // If we're at this point, we know the player has an ability.
                 // We can now use the ability.
 
-                buttons[3] = new MenuButton("Use Ability (" + ability.Position.ToString() + ")",
+                buttons[5] = new MenuButton("Use Ability (" + ability.Position.ToString() + ")",
                     () => ability.ShowMenu(playerMember));
 
             } else {
 
-                buttons[3] = new MenuButton("There is no ability available for use!", () => { });
+                buttons[5] = new MenuButton("There is no ability available for use!", () => { });
 
             }
 
